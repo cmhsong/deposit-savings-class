@@ -396,6 +396,13 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
     </div>
 
     <div class="panel" data-read>
+      <h2>만기 때 통장에 적힌 내용</h2>
+      <p class="lead" id="c-pb-lead"></p>
+      <div id="c-pb-cover" aria-hidden="true"></div>
+      <figure class="pb-page" id="c-pb"></figure>
+    </div>
+
+    <div class="panel" data-read>
       <h2>계산하는 방법</h2>
       <ol class="steps" id="c-steps"></ol>
       <details id="c-detail"><summary>달마다 이자 보기</summary><div class="scroll" id="c-table"></div></details>
@@ -659,6 +666,28 @@ document.addEventListener('click', function(e){
   inp.dispatchEvent(new Event('input', {bubbles:true}));
 });
 
+/* 고른 금액·금리·기간으로 만기 때 통장에 찍히는 줄을 만든다 */
+function passbookHTML(type, amt, n, r, tax){
+  var c = calc(type, amt, n, r, tax), s = type === 'sav', rows = '', i;
+  function row(cls, d, w, m, b){ return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + d + '</td><td>' + w + '</td><td class="n">' + m + '</td><td class="n">' + b + '</td></tr>'; }
+  if(!s){
+    rows += row('', '가입한 날', '맡김', won(amt), won(amt));
+    rows += row('wait', n + '개월 동안', '기다려요', '없음', won(amt));
+  } else {
+    var show = n <= 12 ? n : 3;
+    for(i = 1; i <= show; i++) rows += row('', i + '번째 달', i + '번째 넣음', won(amt), won(amt*i));
+    if(n > 12){
+      rows += row('wait', '4~' + (n-1) + '번째 달', '매달 넣어요', won(amt) + '씩', won(amt*(n-1)));
+      rows += row('', n + '번째 달', n + '번째 넣음', won(amt), won(amt*n));
+    }
+  }
+  rows += row(tax ? '' : 'end', '만기 날', '이자', '+' + won(c.interest), won(c.principal + c.interest));
+  if(tax) rows += row('end', '만기 날', '세금', '−' + won(c.tax), won(c.total));
+  return '<figcaption>' + (s ? '적금' : '예금') + ' 통장 안쪽 <span>' + (s ? '매달 ' : '') + won(amt) + ' · 연 ' + r + '% · ' + termText(n) + '</span></figcaption>' +
+    '<div class="scroll"><table><thead><tr><th>날짜</th><th>내용</th><th>넣은 돈</th><th>통장에 있는 돈</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '<p>만기 날 통장에 있는 돈은 <b class="num">' + won(c.total) + '</b>이에요. 이 돈을 모두 받아요.</p>';
+}
+
 /* ── ② 계산하기 ── */
 function renderCalc(){
   var type = radio('c-type'), tax = taxRate();
@@ -670,6 +699,13 @@ function renderCalc(){
   var c = calc(type, amt, n, r, tax);
   $('c-eq').innerHTML = eqHTML(c, tax);
   $('c-steps').innerHTML = stepsHTML(type, amt, n, r, tax);
+  var sv = type === 'sav';
+  $('c-pb-lead').textContent = sv
+    ? '적금 통장에는 매달 넣은 돈이 한 줄씩 적혀요. 만기 날에 이자가 적혀요.'
+    : '예금 통장에는 처음에 맡긴 돈이 한 줄 적혀요. 만기 날에 이자가 적혀요.';
+  $('c-pb-cover').innerHTML = '<div class="pb-cover' + (sv ? ' s' : '') + '"><span class="pb-emblem">' + (sv ? '적금' : '예금') + '</span><span class="pb-bank">금리교실 은행</span><b class="pb-name">' + (sv ? '정기적금 통장' : '정기예금 통장') + '</b></div>';
+  $('c-pb').className = 'pb-page ' + (sv ? 's' : 'd');
+  $('c-pb').innerHTML = passbookHTML(type, amt, n, r, tax);
   $('c-detail').hidden = type !== 'sav';
   if(type === 'sav'){
     var u = amt*r/100/12, rows = '';
