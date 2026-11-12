@@ -233,6 +233,10 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
 .ihd .badge{background:var(--pb-sheen);color:var(--pb-ink)}
 .flash{border-width:2px;border-radius:14px}
 .opts button{border-radius:16px}
+/* 쪽 넘기기: 한 화면에 한 쪽씩 */
+.pager{display:flex;justify-content:space-between;align-items:center;gap:.6rem}
+.pager button{min-width:7.5rem;min-height:3.2rem;font-size:1.15rem;font-weight:700}
+.pager span{font-size:1.1rem}
 </style>
 
 <div class="wrap">
@@ -273,7 +277,7 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
       <p class="lead">은행에 돈을 맡기면 은행이 돈을 조금 더 줘요. 더 주는 돈이 <b>이자</b>예요. 돈을 맡기는 방법은 두 가지예요.</p>
     </div>
 
-    <div class="grid2">
+    <div class="grid2" data-split>
       <div class="panel kind" data-read>
         <div class="pb-cover" aria-hidden="true"><span class="pb-emblem">예금</span><span class="pb-bank">금리교실 은행</span><b class="pb-name">정기예금 통장</b></div>
         <h2 class="dep">예금</h2>
@@ -390,7 +394,7 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
       </div>
     </div>
 
-    <div class="panel" data-read>
+    <div class="panel" data-read data-join>
       <h2>만기에 받는 돈</h2>
       <div class="eq" id="c-eq"></div>
     </div>
@@ -573,6 +577,12 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
       </details>
     </div>
   </section>
+
+  <div class="pager" role="group" aria-label="쪽 넘기기">
+    <button id="pg-prev">◀ 이전</button>
+    <span class="num" id="pg-out" aria-live="polite"></span>
+    <button class="primary" id="pg-next">다음 ▶</button>
+  </div>
 
   <p class="foot">금리 그래프는 오픈소스 <a href="https://github.com/chartjs/Chart.js" target="_blank" rel="noopener">Chart.js</a>(MIT 라이선스)로 그립니다. 금리와 상품은 수업용으로 만든 가짜 값입니다.</p>
 </div>
@@ -1209,7 +1219,7 @@ if(!synth || !window.SpeechSynthesisUtterance){ $('tts').hidden = true; }
 else {
   $('tts').addEventListener('click', function(){
     var parts = [];
-    $('v-' + CUR).querySelectorAll('[data-read]').forEach(function(el){ var t = (el.innerText || el.textContent || '').trim(); if(t) parts.push(t); });
+    $('v-' + CUR).querySelectorAll('[data-read]').forEach(function(el){ if(el.offsetParent === null) return; var t = (el.innerText || el.textContent || '').trim(); if(t) parts.push(t); });
     if(!parts.length) return;
     synth.cancel();
     var u = new SpeechSynthesisUtterance(parts.join('. ').replace(/[💰🪙⏳🎉📈📉⭕❌]/g, ''));
@@ -1232,9 +1242,40 @@ function route(){
   document.querySelectorAll('nav.tabs a').forEach(function(a){
     if(a.getAttribute('href') === '#'+h) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
   });
-  if(h === 'sim'){ drawChart(); if(chart) chart.resize(); }
+  showPage();
 }
 window.addEventListener('hashchange', route);
+
+/* ── 쪽 넘기기: 탭 안의 묶음을 한 쪽씩 보여 준다. 마지막 쪽에서 '다음'을 누르면 다음 탭으로 간다 ── */
+var PAGES = {}, PG = {};
+VIEWS.forEach(function(v){
+  var list = [];
+  Array.prototype.forEach.call($('v-' + v).children, function(el){
+    if(el.hasAttribute('data-split')) Array.prototype.forEach.call(el.children, function(c){ list.push([c]); });
+    else if(el.hasAttribute('data-join') && list.length) list[list.length-1].push(el);
+    else list.push([el]);
+  });
+  PAGES[v] = list; PG[v] = 0;
+});
+function showPage(){
+  var list = PAGES[CUR], i = Math.min(PG[CUR], list.length-1), vi = VIEWS.indexOf(CUR);
+  list.forEach(function(els, k){ els.forEach(function(el){ el.hidden = k !== i; }); });
+  $('pg-out').textContent = (i+1) + ' / ' + list.length;
+  $('pg-prev').disabled = i === 0 && vi === 0;
+  $('pg-next').disabled = i === list.length-1 && vi === VIEWS.length-1;
+  $('pg-next').textContent = i === list.length-1 && vi < VIEWS.length-1 ? '다음 단계 ▶' : '다음 ▶';
+  if(CUR === 'sim'){ drawChart(); if(chart) chart.resize(); }
+}
+function turn(d){
+  stopRead();
+  var list = PAGES[CUR], i = PG[CUR] + d, vi = VIEWS.indexOf(CUR);
+  if(i < 0){ if(vi === 0) return; var p = VIEWS[vi-1]; PG[p] = PAGES[p].length-1; location.hash = p; }
+  else if(i >= list.length){ if(vi === VIEWS.length-1) return; var nx = VIEWS[vi+1]; PG[nx] = 0; location.hash = nx; }
+  else { PG[CUR] = i; showPage(); }
+  try{ window.scrollTo(0, 0); }catch(e){}
+}
+$('pg-prev').addEventListener('click', function(){ turn(-1); });
+$('pg-next').addEventListener('click', function(){ turn(1); });
 
 TAXON = get('rate-class-tax', '0') === '1';
 load(); renderCalc(); renderSim(); newQ();
