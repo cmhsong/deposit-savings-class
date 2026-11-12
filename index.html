@@ -258,6 +258,21 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
 .book .face th,.book .face td,.book .face th:nth-child(2),.book .face td:nth-child(2),.book .face th:last-child,.book .face td:last-child{text-align:center}
 .book .bank{text-align:center}
 #c-pb-cover .pb-cover,.kind>.pb-cover{margin-inline:auto}
+/* 그림으로 바로 알아보기: 순서 그림, 높을 때·낮을 때 카드, 이자는 금색 */
+.flow{list-style:none;margin:0;padding:0;display:flex;gap:.9rem}
+.flow li{position:relative;flex:1;min-width:0;background:var(--sunk);border-radius:12px;padding:.6rem .3rem;text-align:center;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:.1rem}
+.flow li span{font-size:2.1rem;line-height:1.2}
+.flow li:not(:last-child)::after{content:"▶";position:absolute;right:-.8rem;top:50%;transform:translateY(-50%);font-size:.7rem;color:var(--muted)}
+.cue{display:flex;flex-direction:column;align-items:center;text-align:center;gap:.1rem;padding:1rem;border-radius:14px;background:var(--stamp-soft);color:var(--stamp)}
+.cue.down{background:var(--dep-soft);color:var(--dep)}
+.cue span{font-size:2.6rem;line-height:1.2}
+.cue b{font-size:1.1rem}
+.cue em{font-style:normal;font-weight:700;font-size:1.45rem}
+.eq .box.gold{background:var(--gold);color:var(--gold-ink)}
+.news{font-size:1.15rem;font-weight:700}
+.news.up{background:var(--stamp-soft);color:var(--stamp)}
+.news.down{background:var(--dep-soft);color:var(--dep)}
+.words dt{font-size:1.15rem}
 /* 화면 폭을 끝까지 쓰고, 내용은 위에서 아래로 스크롤해서 본다 */
 .wrap{max-width:none;padding-block:.8rem 3rem;gap:1rem}
 /* 기본은 양쪽에 20mm 여백. '화면 넓게'를 켜면(.full) 여백 없이 화면 폭을 끝까지 쓴다. 좌은 화면에서는 여백을 두지 않는다 */
@@ -317,10 +332,8 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
         <div class="pb-cover" aria-hidden="true"><span class="pb-emblem">예금</span><span class="pb-bank">금리교실 은행</span><b class="pb-name">정기예금 통장</b></div>
         <h2 class="dep">예금</h2>
         <p><b>큰돈을 한 번에</b> 맡겨요.</p>
-        <ul>
-          <li>약속한 날까지 기다려요.</li>
-          <li>모아 둔 돈이 있을 때 좋아요.</li>
-        </ul>
+        <ol class="flow"><li><span aria-hidden="true">💰</span>한 번 넣기</li><li><span aria-hidden="true">⏳</span>기다리기</li><li><span aria-hidden="true">🎁</span>이자 받기</li></ol>
+        <p>모아 둔 돈이 있을 때 좋아요.</p>
         <div class="months" id="pic-dep" aria-hidden="true"></div>
         <h3>예금 통장 안쪽 (500만 원 · 연 3% · 12개월)</h3>
         <figure class="book d" id="b-pb-dep"></figure>
@@ -329,10 +342,8 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
         <div class="pb-cover s" aria-hidden="true"><span class="pb-emblem">적금</span><span class="pb-bank">금리교실 은행</span><b class="pb-name">정기적금 통장</b></div>
         <h2 class="sav">적금</h2>
         <p><b>매달 조금씩</b> 넣어요.</p>
-        <ul>
-          <li>약속한 날까지 계속 넣어요.</li>
-          <li>돈을 모으고 싶을 때 좋아요.</li>
-        </ul>
+        <ol class="flow"><li><span aria-hidden="true">🪙</span>매달 넣기</li><li><span aria-hidden="true">🔁</span>계속 넣기</li><li><span aria-hidden="true">🎁</span>이자 받기</li></ol>
+        <p>돈을 모으고 싶을 때 좋아요.</p>
         <div class="months" id="pic-sav" aria-hidden="true"></div>
         <h3>적금 통장 안쪽 (매달 10만 원 · 연 3% · 12개월)</h3>
         <figure class="book s" id="b-pb-sav"></figure>
@@ -342,21 +353,21 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
     <div class="panel" data-read>
       <h2>알아 두면 좋은 말</h2>
       <dl class="words">
-        <div><dt>통장에 적힌 말</dt><dd>맡기신 금액은 넣은 돈, 찾으신 금액은 꺼낸 돈, 잔액은 남은 돈이에요.</dd></div>
-        <div><dt>금리</dt><dd>이자를 얼마나 주는지 알려 주는 숫자예요. 연 3%는 100만 원을 1년 맡기면 3만 원을 준다는 뜻이에요.</dd></div>
-        <div><dt>만기</dt><dd>약속한 기간이 끝나는 날이에요. 이날 돈과 이자를 받아요.</dd></div>
-        <div><dt>중도해지 (깨기)</dt><dd>만기 전에 그만두는 거예요. 이자를 아주 조금만 받아요.</dd></div>
-        <div><dt>긴급출금 (조금 꺼내기)</dt><dd>급할 때 돈을 조금만 꺼내는 거예요. 2번까지 할 수 있어요.</dd></div>
+        <div><dt>📒 통장에 적힌 말</dt><dd>맡기신 금액은 넣은 돈, 찾으신 금액은 꺼낸 돈, 잔액은 남은 돈이에요.</dd></div>
+        <div><dt>📊 금리</dt><dd>이자를 얼마나 주는지 알려 주는 숫자예요. 연 3%는 100만 원을 1년 맡기면 3만 원을 준다는 뜻이에요.</dd></div>
+        <div><dt>🏁 만기</dt><dd>약속한 기간이 끝나는 날이에요. 이날 돈과 이자를 받아요.</dd></div>
+        <div><dt>✂️ 중도해지 (깨기)</dt><dd>만기 전에 그만두는 거예요. 이자를 아주 조금만 받아요.</dd></div>
+        <div><dt>🆘 긴급출금 (조금 꺼내기)</dt><dd>급할 때 돈을 조금만 꺼내는 거예요. 2번까지 할 수 있어요.</dd></div>
       </dl>
     </div>
 
     <div class="panel" data-read>
       <h2>금리는 바뀌어요</h2>
-      <ul class="easy">
-        <li>가입할 때 정한 금리는 만기까지 <b>그대로</b>예요.</li>
-        <li>금리가 <b>높을 때</b>는 <b>길게</b> 가입하면 좋아요.</li>
-        <li>금리가 <b>낮을 때</b>는 <b>짧게</b> 가입하고 기다려요.</li>
-      </ul>
+      <div class="grid2">
+        <div class="cue up"><span aria-hidden="true">📈</span><b>금리가 높을 때</b><em>길게 가입해요</em></div>
+        <div class="cue down"><span aria-hidden="true">📉</span><b>금리가 낮을 때</b><em>짧게 가입해요</em></div>
+      </div>
+      <p>🔒 가입할 때 정한 금리는 만기까지 <b>그대로</b>예요.</p>
       <div><a href="#calc"><b>다음: ② 계산하기 →</b></a></div>
     </div>
   </section>
@@ -490,7 +501,7 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
     <div class="grid2">
       <div class="panel">
         <h2>이번 달 금리</h2>
-        <p class="cap">숫자가 클수록 이자를 많이 줘요. 숫자를 누르면 골라져요.</p>
+        <p class="cap">⭐ 표시가 이자를 가장 많이 줘요. 숫자를 누르면 골라져요.</p>
         <div class="scroll">
           <table class="rates">
             <thead><tr><th>기간</th><th>💰 예금</th><th>🪙 적금</th></tr></thead>
@@ -633,10 +644,10 @@ function calc(type, amt, n, r, tax){
   return {principal:principal, interest:interest, tax:t, net:interest-t, total:principal+interest-t};
 }
 function eqHTML(c, tax){
-  return '<div class="box"><span>넣은 돈</span><b>' + won(c.principal) + '</b></div><span class="op">+</span>' +
-    '<div class="box"><span>이자</span><b>' + won(c.interest) + '</b></div>' +
-    (tax ? '<span class="op">−</span><div class="box"><span>세금</span><b>' + won(c.tax) + '</b></div>' : '') +
-    '<span class="op">=</span><div class="box total"><span>받는 돈</span><b>' + won(c.total) + '</b></div>';
+  return '<div class="box"><span>💰 넣은 돈</span><b>' + won(c.principal) + '</b></div><span class="op">+</span>' +
+    '<div class="box gold"><span>🎁 이자</span><b>' + won(c.interest) + '</b></div>' +
+    (tax ? '<span class="op">−</span><div class="box"><span>🧾 세금</span><b>' + won(c.tax) + '</b></div>' : '') +
+    '<span class="op">=</span><div class="box total"><span>👛 받는 돈</span><b>' + won(c.total) + '</b></div>';
 }
 /* 금액·금리·기간에 맞춰 계산 방법을 단계별로 만든다 */
 function stepsHTML(type, amt, n, r, tax){
@@ -886,10 +897,12 @@ function moneyLine(e){
     (e.tax ? ' − 세금 <span class="num">' + won(e.tax) + '</span>' : '') + ' = <b class="num">' + won(e.total) + '</b>';
 }
 function renderRates(){
+  var best = {dep:0, sav:0};
+  TERMS.forEach(function(t){ best.dep = Math.max(best.dep, rateOf('dep', t)); best.sav = Math.max(best.sav, rateOf('sav', t)); });
   $('s-rates').innerHTML = TERMS.map(function(t){
     function cell(type){
       var on = pick.type === type && pick.term === t;
-      return '<td><button class="' + (type==='dep'?'d':'s') + '" data-type="'+type+'" data-term="'+t+'" aria-pressed="'+(on?'true':'false')+'" aria-label="' + (type==='dep'?'예금 ':'적금 ') + t + '개월 연 ' + pct(rateOf(type,t)) + '">' + pct(rateOf(type,t)) + '</button></td>';
+      return '<td><button class="' + (type==='dep'?'d':'s') + '" data-type="'+type+'" data-term="'+t+'" aria-pressed="'+(on?'true':'false')+'" aria-label="' + (type==='dep'?'예금 ':'적금 ') + t + '개월 연 ' + pct(rateOf(type,t)) + '">' + (rateOf(type,t) >= best[type] ? '⭐ ' : '') + pct(rateOf(type,t)) + '</button></td>';
     }
     return '<tr><td>' + termShort(t) + '</td>' + cell('dep') + cell('sav') + '</tr>';
   }).join('');
@@ -928,12 +941,13 @@ function ewPrev(){
 }
 function renderSim(){
   $('s-tiles').innerHTML =
-    '<div class="tile"><span>오늘</span><b>' + ym(S.m) + '</b></div>' +
-    '<div class="tile"><span>기준금리</span><b>' + pct(S.base) + '</b></div>' +
-    '<div class="tile"><span>내 지갑</span><b>' + won(S.cash) + '</b></div>' +
-    '<div class="tile"><span>은행에 넣은 돈</span><b>' + won(paidIn()) + '</b></div>' +
-    '<div class="tile"><span>지금까지 받은 이자</span><b class="sav">' + won(S.earned) + '</b></div>';
+    '<div class="tile"><span>📅 오늘</span><b>' + ym(S.m) + '</b></div>' +
+    '<div class="tile"><span>📊 기준금리</span><b>' + pct(S.base) + '</b></div>' +
+    '<div class="tile"><span>👛 내 지갑</span><b>' + won(S.cash) + '</b></div>' +
+    '<div class="tile"><span>🏦 은행에 넣은 돈</span><b>' + won(paidIn()) + '</b></div>' +
+    '<div class="tile"><span>🎁 지금까지 받은 이자</span><b class="sav">' + won(S.earned) + '</b></div>';
   $('s-news').textContent = S.news;
+  $('s-news').className = 'news' + (S.news.indexOf('📈') === 0 ? ' up' : S.news.indexOf('📉') === 0 ? ' down' : '');
   $('s-auto-on').checked = S.auto !== false; $('s-auto-off').checked = S.auto === false;
   $('s-tax-on').checked = TAXON; $('s-tax-off').checked = !TAXON;
   syncEdit();
@@ -1264,7 +1278,7 @@ else {
     $('v-' + CUR).querySelectorAll('[data-read]').forEach(function(el){ if(el.offsetParent === null) return; var t = (el.innerText || el.textContent || '').trim(); if(t) parts.push(t); });
     if(!parts.length) return;
     synth.cancel();
-    var u = new SpeechSynthesisUtterance(parts.join('. ').replace(/[💰🪙⏳🎉📈📉⭕❌]/g, ''));
+    var u = new SpeechSynthesisUtterance(parts.join('. ').replace(/[\u{1F000}-\u{1FAFF}\u{2300}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}]/gu, ''));
     u.lang = 'ko-KR'; u.rate = 0.85;
     u.onend = u.onerror = function(){ $('tts-stop').hidden = true; $('tts').hidden = false; };
     $('tts').hidden = true; $('tts-stop').hidden = false;
