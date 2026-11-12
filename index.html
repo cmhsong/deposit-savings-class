@@ -237,6 +237,19 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
 .pager{display:flex;justify-content:space-between;align-items:center;gap:.6rem}
 .pager button{min-width:7.5rem;min-height:3.2rem;font-size:1.15rem;font-weight:700}
 .pager span{font-size:1.1rem}
+/* 화면에 꽉 차게: 폭을 끝까지 쓰고, 높이도 화면만큼 채운다. 쪽 넘기기 버튼은 화면 아래에 붙는다 */
+html,body{height:100%}
+.wrap{max-width:none;min-height:100%;padding-block:.8rem 0;gap:1rem}
+.wrap>section.view{flex:1}
+.wrap>section.view>.panel,.wrap>section.view>.grid2{flex:1}
+.wrap>section.view>.grid2>.panel{align-self:stretch}
+.hero{padding:.9rem 1.3rem;border-radius:16px}
+.hero h1{font-size:1.55rem}
+.hero .eyebrow{display:none}
+.hero-art .pb-cover{width:6.2rem;font-size:.42rem}
+.hero-art .pb-cover:last-child{margin-left:-1.6rem}
+.pager{position:sticky;bottom:0;z-index:5;background:var(--bg);padding:.6rem 0 calc(.6rem + env(safe-area-inset-bottom, 0px));border-top:1px solid var(--line)}
+.foot{padding-bottom:.6rem}
 </style>
 
 <div class="wrap">
