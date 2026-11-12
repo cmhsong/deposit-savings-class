@@ -255,6 +255,11 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
 .book figcaption{display:flex;flex-direction:column;gap:.4rem}
 /* 화면 폭을 끝까지 쓰고, 내용은 위에서 아래로 스크롤해서 본다 */
 .wrap{max-width:none;padding-block:.8rem 3rem;gap:1rem}
+/* 기본은 양쪽에 20mm 여백. '화면 넓게'를 켜면(.full) 여백 없이 화면 폭을 끝까지 쓴다. 좌은 화면에서는 여백을 두지 않는다 */
+@media (min-width:700px){
+  .wrap:not(.full){padding-left:max(20mm, env(safe-area-inset-left, 0px));padding-right:max(20mm, env(safe-area-inset-right, 0px))}
+}
+@media (max-width:699px){#w-full{display:none}}
 .hero{padding:.9rem 1.3rem;border-radius:16px}
 .hero h1{font-size:1.55rem}
 .hero .eyebrow{display:none}
@@ -283,6 +288,7 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
     <button id="z-plus" aria-label="글자 크게">가 +</button>
     <button id="z-reset">처음 크기</button>
     <span class="sp"></span>
+    <button id="w-full" aria-pressed="false">↔ 화면 넓게</button>
     <button id="tts">🔊 읽어 주기</button>
     <button id="tts-stop" hidden>■ 그만 읽기</button>
   </div>
@@ -1244,6 +1250,17 @@ function setScale(v){
 $('z-minus').addEventListener('click', function(){ setScale(SCALE - 0.1); });
 $('z-plus').addEventListener('click', function(){ setScale(SCALE + 0.1); });
 $('z-reset').addEventListener('click', function(){ setScale(1); });
+
+/* ── 화면 폭: 양쪽 20mm 여백(기본) ↔ 화면 넓게 ── */
+function setFull(on){
+  document.querySelector('.wrap').classList.toggle('full', on);
+  $('w-full').setAttribute('aria-pressed', on ? 'true' : 'false');
+  $('w-full').textContent = on ? '↔ 여백 두기' : '↔ 화면 넓게';
+  put('rate-class-full', on ? '1' : '0');
+  if(chart) chart.resize();
+}
+$('w-full').addEventListener('click', function(){ setFull(this.getAttribute('aria-pressed') !== 'true'); });
+setFull(get('rate-class-full', '0') === '1');
 
 /* ── 읽어 주기 ── */
 var synth = window.speechSynthesis, CUR = 'basics';
