@@ -95,6 +95,8 @@ fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:.4re
 .stepper button{min-width:2.8rem;font-size:1.3rem;font-weight:700;line-height:1}
 input[type=number]{font:inherit;font-family:var(--mono);font-weight:600;font-size:1.15rem;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:.5rem .6rem;width:6.5em;min-width:0;text-align:right}
 .unit{white-space:normal}
+input[type=text]{font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:.5rem .7rem;width:100%;min-width:0}
+#k-list button{min-height:2.2rem;padding:.2rem .7rem;margin-left:.4rem}
 .chips{display:flex;flex-wrap:wrap;gap:.4rem}
 button{font:inherit;cursor:pointer;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:.5rem .9rem;min-height:2.75rem}
 button:hover{border-color:var(--ink)}
@@ -407,6 +409,42 @@ svg text.now{fill:var(--stamp);font-weight:600;font-size:12px}
       <div class="opts" id="q-opts"></div>
       <div id="q-result" hidden data-read style="display:flex;flex-direction:column;gap:.6rem"></div>
       <div><button class="primary" id="q-next">다음 문제 ▶</button></div>
+    </div>
+
+    <div class="panel">
+      <details id="k-box">
+        <summary>문제 추가하기 (선생님용)</summary>
+        <div style="display:flex;flex-direction:column;gap:.9rem;padding-top:.6rem">
+          <label class="field"><span class="lab">문제</span><input type="text" id="k-q" maxlength="200" placeholder="예: 용돈을 매달 5만 원씩 모으려면 무엇에 가입할까요?"></label>
+          <div class="form">
+            <label class="field"><span class="lab">정답</span><input type="text" id="k-a" maxlength="60" placeholder="예: 적금"></label>
+            <label class="field"><span class="lab">틀린 보기 1</span><input type="text" id="k-b" maxlength="60" placeholder="예: 예금"></label>
+            <label class="field"><span class="lab">틀린 보기 2 (없어도 돼요)</span><input type="text" id="k-c" maxlength="60"></label>
+          </div>
+          <label class="field"><span class="lab">풀이 (없어도 돼요)</span><input type="text" id="k-why" maxlength="200" placeholder="예: 매달 조금씩 넣는 것은 적금이에요."></label>
+          <p id="k-msg" hidden></p>
+          <div><button class="primary" id="k-add">문제 추가</button></div>
+
+          <h3>내가 만든 문제 <span class="num" id="k-count"></span></h3>
+          <ul class="easy" id="k-list"></ul>
+
+          <fieldset>
+            <legend>문제 내는 방법</legend>
+            <div class="seg">
+              <label><input type="radio" name="k-mode" id="k-mode-mix" value="mix" checked>원래 문제와 섞어서</label>
+              <label><input type="radio" name="k-mode" id="k-mode-only" value="only">내가 만든 문제만</label>
+            </div>
+          </fieldset>
+
+          <div class="field" id="k-share">
+            <span class="lab">학생에게 보낼 주소</span>
+            <p class="cap">만든 문제는 지금 이 기기에만 저장돼요. 학생 기기에서도 나오게 하려면 아래 주소를 학생에게 보내 주세요. 문제를 고치면 주소도 바뀌어요.</p>
+            <input type="text" id="k-link" readonly aria-label="학생에게 보낼 주소">
+            <div><button id="k-copy">주소 복사</button></div>
+          </div>
+          <p class="cap" id="k-share-note" hidden>만든 문제는 지금 이 기기에만 저장돼요. 학생에게 보낼 주소는 GitHub 주소로 열었을 때 만들 수 있어요.</p>
+        </div>
+      </details>
     </div>
   </section>
 
@@ -849,6 +887,11 @@ function uniq(ans, cands){
   return shuffle(out).map(won);
 }
 function makeQ(){
+  if(CUSTOM.length && (QMODE === 'only' || Math.random() < 0.5)){
+    var ci; do { ci = Math.floor(Math.random()*CUSTOM.length); } while(CUSTOM.length > 1 && ci === lastCu);
+    lastCu = ci; var cq = CUSTOM[ci];
+    return {q:cq.q, a:cq.o[0], o:shuffle(cq.o), why:cq.why ? '<p>' + esc(cq.why) + '</p>' : ''};
+  }
   var kind = rnd(['c','c','i','p','t']), q, amt, r, n, c;
   if(kind === 'c'){
     var i; do { i = Math.floor(Math.random()*CONCEPT.length); } while(i === lastC);
@@ -873,7 +916,7 @@ function score(){ $('q-score').textContent = '⭐ ' + qRight + '개 / ' + qDone 
 function newQ(){
   Q = makeQ(); Q.done = false;
   $('q-text').textContent = Q.q;
-  $('q-opts').innerHTML = Q.o.map(function(o, i){ return '<button data-i="' + i + '">' + o + '</button>'; }).join('');
+  $('q-opts').innerHTML = Q.o.map(function(o, i){ return '<button data-i="' + i + '">' + esc(o) + '</button>'; }).join('');
   $('q-result').hidden = true;
   score();
 }
@@ -886,10 +929,72 @@ $('q-opts').addEventListener('click', function(e){
     x.disabled = true;
   });
   $('q-result').hidden = false;
-  $('q-result').innerHTML = (ok ? '<span class="ok">⭕ 맞았어요!</span>' : '<span class="no">❌ 아쉬워요. 답은 "' + Q.a + '"이에요.</span>') + Q.why;
+  $('q-result').innerHTML = (ok ? '<span class="ok">⭕ 맞았어요!</span>' : '<span class="no">❌ 아쉬워요. 답은 "' + esc(Q.a) + '"이에요.</span>') + Q.why;
   score();
 });
 $('q-next').addEventListener('click', newQ);
+
+/* ── 문제 추가 (선생님용): 이 기기에 저장하고, 주소에 담아 학생에게 보낼 수 있다 ── */
+var CKEY = 'rate-class-custom', CUSTOM = [], QMODE = get('rate-class-qmode', 'mix'), lastCu = -1;
+function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function validQ(x){
+  return !!x && typeof x.q === 'string' && x.q !== '' && Array.isArray(x.o) && x.o.length >= 2 && x.o.length <= 3 &&
+    x.o.every(function(s){ return typeof s === 'string' && s !== ''; }) && typeof x.why === 'string';
+}
+function packQ(){ return encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(CUSTOM.map(function(x){ return [x.q, x.o, x.why]; })))))); }
+function unpackQ(s){
+  var a = JSON.parse(decodeURIComponent(escape(atob(s))));
+  return a.map(function(t){ return {q:t[0], o:t[1], why:t[2] || ''}; }).filter(validQ).slice(0, 100);
+}
+function kMsg(text, bad){ var m = $('k-msg'); m.hidden = !text; m.textContent = text; m.className = bad ? 'err' : 'ok'; }
+function renderCustom(){
+  $('k-count').textContent = CUSTOM.length + '개';
+  $('k-list').innerHTML = CUSTOM.length ? CUSTOM.map(function(x, i){
+    return '<li><b>' + esc(x.q) + '</b><br>정답: ' + esc(x.o[0]) + ' · 틀린 보기: ' + esc(x.o.slice(1).join(', ')) +
+      '<button data-del="' + i + '" aria-label="' + (i+1) + '번 문제 지우기">지우기</button></li>';
+  }).join('') : '<li class="empty">아직 만든 문제가 없어요.</li>';
+  $('k-mode-only').checked = QMODE === 'only'; $('k-mode-mix').checked = QMODE !== 'only';
+  $('k-link').value = location.origin + location.pathname + (CUSTOM.length ? '?q=' + packQ() : '') + '#quiz';
+  put(CKEY, JSON.stringify(CUSTOM));
+}
+(function(){
+  try{ var t = JSON.parse(get(CKEY, '[]')); if(Array.isArray(t)) CUSTOM = t.filter(validQ); }catch(e){}
+  try{
+    var p = new URLSearchParams(location.search).get('q');
+    if(p){
+      var got = unpackQ(p);
+      if(got.length){ CUSTOM = got; }
+      history.replaceState(null, '', location.pathname + location.hash);
+    }
+  }catch(e){}
+  var framed = false;
+  try{ framed = window.self !== window.top; }catch(e){ framed = true; }
+  if(framed){ $('k-share').hidden = true; $('k-share-note').hidden = false; }
+  renderCustom();
+})();
+$('k-add').addEventListener('click', function(){
+  var q = $('k-q').value.trim(), a = $('k-a').value.trim(), b = $('k-b').value.trim(), c = $('k-c').value.trim(), why = $('k-why').value.trim();
+  if(!q){ kMsg('문제를 써 주세요.', true); return; }
+  if(!a || !b){ kMsg('정답과 틀린 보기 1을 써 주세요.', true); return; }
+  if(a === b || (c && (c === a || c === b))){ kMsg('보기가 서로 달라야 해요.', true); return; }
+  if(CUSTOM.length >= 100){ kMsg('문제는 100개까지 만들 수 있어요.', true); return; }
+  CUSTOM.push({q:q, o:c ? [a, b, c] : [a, b], why:why});
+  ['k-q','k-a','k-b','k-c','k-why'].forEach(function(id){ $(id).value = ''; });
+  renderCustom(); kMsg('문제를 추가했어요. "다음 문제"를 누르면 나와요.', false);
+});
+$('k-list').addEventListener('click', function(e){
+  var b = e.target.closest('button[data-del]'); if(!b) return;
+  CUSTOM.splice(+b.dataset.del, 1); lastCu = -1; renderCustom(); kMsg('문제를 지웠어요.', false);
+});
+document.querySelectorAll('input[name="k-mode"]').forEach(function(el){
+  el.addEventListener('change', function(){ QMODE = el.value; put('rate-class-qmode', QMODE); });
+});
+$('k-copy').addEventListener('click', function(){
+  var inp = $('k-link'), btn = this;
+  function done(){ btn.textContent = '복사했어요'; setTimeout(function(){ btn.textContent = '주소 복사'; }, 2000); }
+  function manual(){ inp.focus(); inp.select(); kMsg('주소를 골라 두었어요. Ctrl+C로 복사해 주세요.', false); }
+  try{ navigator.clipboard.writeText(inp.value).then(done, manual); }catch(e){ manual(); }
+});
 
 /* ── 글자 크기 ── */
 function setScale(v){
