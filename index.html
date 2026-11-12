@@ -234,6 +234,25 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
 .ihd .badge{background:var(--pb-sheen);color:var(--pb-ink)}
 .flash{border-width:2px;border-radius:14px}
 .opts button{border-radius:16px}
+/* 통장 안쪽: 한 면 = 33rem × 20.5rem (실제 14cm × 8.7cm 비율). 면 사이 점선은 접는 선 */
+.book{margin:0;display:flex;flex-direction:column;gap:.7rem;min-width:0}
+.book-in{width:min(100%,33rem);background:var(--paper);border:1px solid var(--paper-line);border-radius:.5rem;box-shadow:0 .4rem 1rem var(--shadow);overflow:hidden}
+.book .face{min-height:20.5rem;padding:.7rem .8rem;border-bottom:2px dashed var(--paper-line);overflow-x:auto;font-family:var(--mono);font-size:.78rem;line-height:1.35}
+.book .face:last-child{border-bottom:0}
+.book .bank{font-family:var(--display);font-size:1.1rem;font-weight:700;padding-bottom:.5rem;border-bottom:2px solid var(--dep)}
+.book.s .bank{border-bottom-color:var(--sav)}
+.book dl{margin:.7rem 0 0;display:grid;grid-template-columns:1fr 1fr;gap:.5rem 1rem}
+.book dl div{display:flex;flex-direction:column;border-bottom:1px solid var(--paper-line);padding-bottom:.2rem;min-width:0}
+.book dt{color:var(--muted);font-family:var(--body);font-size:.75rem}
+.book dd{margin:0;font-weight:600;font-size:.95rem}
+.book table{font-size:inherit}
+.book th,.book td{padding:.2rem .3rem;height:1.45rem;border-bottom:1px solid var(--paper-line);white-space:nowrap;font-size:inherit}
+.book th{font-family:var(--body);font-size:.7rem;color:var(--ink);background:var(--sunk)}
+.book th:first-child,.book td:first-child{color:var(--muted);text-align:center;width:1.8em}
+.book th:nth-child(2),.book td:nth-child(2),.book th:last-child,.book td:last-child{text-align:left}
+.book tr.end td{font-weight:700;color:var(--dep)}
+.book.s tr.end td{color:var(--sav)}
+.book figcaption{display:flex;flex-direction:column;gap:.4rem}
 /* 화면 폭을 끝까지 쓰고, 내용은 위에서 아래로 스크롤해서 본다 */
 .wrap{max-width:none;padding-block:.8rem 3rem;gap:1rem}
 .hero{padding:.9rem 1.3rem;border-radius:16px}
@@ -293,17 +312,8 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
           <li>모아 둔 돈이 있을 때 좋아요.</li>
         </ul>
         <div class="months" id="pic-dep" aria-hidden="true"></div>
-        <figure class="pb-page d">
-          <figcaption>예금 통장 안쪽 <span>500만 원 · 연 3% · 12개월</span></figcaption>
-          <div class="scroll"><table>
-            <thead><tr><th>날짜</th><th>내용</th><th>넣은 돈 (원)</th><th>통장에 있는 돈 (원)</th></tr></thead>
-            <tbody>
-              <tr><td>1월</td><td>맡김</td><td class="n">5,000,000</td><td class="n">5,000,000</td></tr>
-              <tr class="wait"><td>2월~12월</td><td>기다려요</td><td class="n">없음</td><td class="n">5,000,000</td></tr>
-              <tr class="end"><td>다음 해 1월</td><td>만기 이자</td><td class="n">+150,000</td><td class="n">5,150,000</td></tr>
-            </tbody>
-          </table></div>
-        </figure>
+        <h3>예금 통장 안쪽 (500만 원 · 연 3% · 12개월)</h3>
+        <figure class="book d" id="b-pb-dep"></figure>
       </div>
       <div class="panel kind s" data-read>
         <div class="pb-cover s" aria-hidden="true"><span class="pb-emblem">적금</span><span class="pb-bank">금리교실 은행</span><b class="pb-name">정기적금 통장</b></div>
@@ -315,19 +325,8 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
           <li>돈을 모으고 싶을 때 좋아요.</li>
         </ul>
         <div class="months" id="pic-sav" aria-hidden="true"></div>
-        <figure class="pb-page s">
-          <figcaption>적금 통장 안쪽 <span>매달 10만 원 · 연 3% · 12개월</span></figcaption>
-          <div class="scroll"><table>
-            <thead><tr><th>날짜</th><th>내용</th><th>넣은 돈 (원)</th><th>통장에 있는 돈 (원)</th></tr></thead>
-            <tbody>
-              <tr><td>1월</td><td>1번째</td><td class="n">100,000</td><td class="n">100,000</td></tr>
-              <tr><td>2월</td><td>2번째</td><td class="n">100,000</td><td class="n">200,000</td></tr>
-              <tr><td>3월</td><td>3번째</td><td class="n">100,000</td><td class="n">300,000</td></tr>
-              <tr class="wait"><td>4월~12월</td><td>매달 넣어요</td><td class="n">100,000씩</td><td class="n">1,200,000</td></tr>
-              <tr class="end"><td>다음 해 1월</td><td>만기 이자</td><td class="n">+19,500</td><td class="n">1,219,500</td></tr>
-            </tbody>
-          </table></div>
-        </figure>
+        <h3>적금 통장 안쪽 (매달 10만 원 · 연 3% · 12개월)</h3>
+        <figure class="book s" id="b-pb-sav"></figure>
       </div>
     </div>
 
@@ -412,7 +411,7 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
       <h2>만기 때 통장에 적힌 내용</h2>
       <p class="lead" id="c-pb-lead"></p>
       <div id="c-pb-cover" aria-hidden="true"></div>
-      <figure class="pb-page" id="c-pb"></figure>
+      <figure class="book" id="c-pb"></figure>
     </div>
 
     <div class="panel" data-read>
@@ -696,23 +695,40 @@ $('c-date').addEventListener('input', function(){ renderCalc(); });
 $('c-date').addEventListener('change', function(){ renderCalc(); });
 
 /* 고른 금액·금리·기간·가입일로 만기 때 통장에 찍히는 줄을 만든다. 적금은 달마다 한 줄씩 모두 적는다 */
-function passbookHTML(type, amt, n, r, tax){
-  var c = calc(type, amt, n, r, tax), s = type === 'sav', rows = '', i;
-  function dg(x){ return Math.round(x).toLocaleString('ko-KR'); } // 통장에는 5,000,000처럼 숫자로 적힌다
-  var d0 = calcDate(), dEnd = addM(d0, n);
-  function row(cls, d, w, m, b){ return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + d + '</td><td>' + w + '</td><td class="n">' + m + '</td><td class="n">' + b + '</td></tr>'; }
-  if(!s){
-    rows += row('', fmtD(d0), '맡김', dg(amt), dg(amt));
-    rows += row('wait', n + '개월 동안', '기다려요', '없음', dg(amt));
-  } else {
-    for(i = 1; i <= n; i++) rows += row('', fmtD(addM(d0, i-1)), i + '번째 넣음', dg(amt), dg(amt*i));
+/* 통장 안쪽은 실제 통장처럼 그린다: 한 면이 가로 14cm × 세로 8.7cm 비율(33rem × 20.5rem).
+   첫 면에는 계좌 정보, 다음 면부터 거래 내용이 한 면에 12줄씩 찍힌다.
+   칸 이름도 통장에 인쇄된 말(거래일, 찾으신 금액, 맡기신 금액, 잔액, 거래내용)을 쓴다 */
+function passbookHTML(type, amt, n, r, tax, d0){
+  var c = calc(type, amt, n, r, tax), s = type === 'sav', dEnd = addM(d0, n), L = [], i, p, x, bal;
+  function dg(v){ return v === '' ? '' : Math.round(v).toLocaleString('ko-KR'); }
+  // 한 줄: [거래일, 찾으신 금액, 맡기신 금액, 잔액, 거래내용]
+  if(!s) L.push([d0, '', amt, amt, '신규']);
+  else for(i = 1; i <= n; i++) L.push([addM(d0, i-1), '', amt, amt*i, i + '회차']);
+  bal = c.principal + c.interest;
+  L.push([dEnd, '', c.interest, bal, '만기이자']);
+  if(tax){ bal -= c.tax; L.push([dEnd, c.tax, '', bal, '이자세금']); }
+  L.push([dEnd, bal, '', 0, '만기해지']);
+  var info = [['상품', s ? '정기적금' : '정기예금'], ['계좌번호', '123-456-789012'], ['예금주', '(내 이름)'],
+    [s ? '월 납입액' : '맡긴 돈', dg(amt) + '원'], ['계약 기간', n + '개월'], ['이율', '연 ' + r2(r).toFixed(2) + '%'],
+    ['신규일 (가입한 날)', fmtD(d0)], ['만기일', fmtD(dEnd)]];
+  var h = '<div class="face"><div class="bank">금리교실 은행</div><dl>' +
+    info.map(function(q){ return '<div><dt>' + q[0] + '</dt><dd>' + q[1] + '</dd></div>'; }).join('') + '</dl></div>';
+  for(p = 0; p < L.length; p += 12){
+    h += '<div class="face"><table><thead><tr><th>줄</th><th>거래일</th><th>찾으신 금액</th><th>맡기신 금액</th><th>잔액</th><th>거래내용</th></tr></thead><tbody>';
+    for(i = p; i < p + 12; i++){
+      x = L[i];
+      h += x ? '<tr' + (i === L.length-1 ? ' class="end"' : '') + '><td>' + (i+1) + '</td><td>' + fmtD(x[0]) + '</td><td class="n">' + dg(x[1]) + '</td><td class="n">' + dg(x[2]) + '</td><td class="n">' + dg(x[3]) + '</td><td>' + x[4] + '</td></tr>'
+             : '<tr><td>' + (i+1) + '</td><td></td><td></td><td></td><td></td><td></td></tr>';
+    }
+    h += '</tbody></table></div>';
   }
-  rows += row(tax ? '' : 'end', fmtD(dEnd), '만기 이자', '+' + dg(c.interest), dg(c.principal + c.interest));
-  if(tax) rows += row('end', fmtD(dEnd), '세금', '−' + dg(c.tax), dg(c.total));
-  return '<figcaption>' + (s ? '적금' : '예금') + ' 통장 안쪽 <span>' + (s ? '매달 ' : '') + won(amt) + ' · 연 ' + r + '% · ' + termText(n) + '</span></figcaption>' +
-    '<div class="scroll"><table><thead><tr><th>날짜</th><th>내용</th><th>넣은 돈 (원)</th><th>통장에 있는 돈 (원)</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
-    '<p>가입한 날은 <b class="num">' + fmtD(d0) + '</b>, 만기 날은 <b class="num">' + fmtD(dEnd) + '</b>이에요.</p><p>만기 날 통장에 있는 돈은 <b class="num">' + won(c.total) + '</b>이에요. 이 돈을 모두 받아요.</p>';
+  return '<div class="book-in">' + h + '</div><figcaption>' +
+    '<p>만기에 받는 돈은 <b class="num">' + won(bal) + '</b>이에요. 마지막 줄 "만기해지"의 찾으신 금액이에요.</p>' +
+    '<ul class="easy"><li><b>맡기신 금액</b>은 넣은 돈이에요.</li><li><b>찾으신 금액</b>은 꺼낸 돈이에요.</li><li><b>잔액</b>은 통장에 남은 돈이에요. 만기에 모두 찾으면 0이 돼요.</li></ul>' +
+    '<p class="cap">실제 통장 한 면 크기(가로 14cm, 세로 8.7cm)에 맞춰 그렸어요. 한 면에 12줄씩 찍혀요. 은행마다 모양은 조금씩 달라요.</p></figcaption>';
 }
+$('b-pb-dep').innerHTML = passbookHTML('dep', 5000000, 12, 3, 0, new Date(2026, 2, 2));
+$('b-pb-sav').innerHTML = passbookHTML('sav', 100000, 12, 3, 0, new Date(2026, 2, 2));
 
 /* ── ② 계산하기 ── */
 function renderCalc(){
@@ -730,8 +746,8 @@ function renderCalc(){
     ? '적금 통장에는 매달 넣은 돈이 한 줄씩 적혀요. 만기 날에 이자가 적혀요.'
     : '예금 통장에는 처음에 맡긴 돈이 한 줄 적혀요. 만기 날에 이자가 적혀요.';
   $('c-pb-cover').innerHTML = '<div class="pb-cover' + (sv ? ' s' : '') + '"><span class="pb-emblem">' + (sv ? '적금' : '예금') + '</span><span class="pb-bank">금리교실 은행</span><b class="pb-name">' + (sv ? '정기적금 통장' : '정기예금 통장') + '</b></div>';
-  $('c-pb').className = 'pb-page ' + (sv ? 's' : 'd');
-  $('c-pb').innerHTML = passbookHTML(type, amt, n, r, tax);
+  $('c-pb').className = 'book ' + (sv ? 's' : 'd');
+  $('c-pb').innerHTML = passbookHTML(type, amt, n, r, tax, calcDate());
   $('c-date-out').textContent = '만기 날은 ' + fmtD(addM(calcDate(), n)) + '이에요.';
   $('c-detail').hidden = type !== 'sav';
   if(type === 'sav'){
