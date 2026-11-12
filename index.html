@@ -234,22 +234,13 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
 .ihd .badge{background:var(--pb-sheen);color:var(--pb-ink)}
 .flash{border-width:2px;border-radius:14px}
 .opts button{border-radius:16px}
-/* 쪽 넘기기: 한 화면에 한 쪽씩 */
-.pager{display:flex;justify-content:space-between;align-items:center;gap:.6rem}
-.pager button{min-width:7.5rem;min-height:3.2rem;font-size:1.15rem;font-weight:700}
-.pager span{font-size:1.1rem}
-/* 화면에 꽉 차게: 폭을 끝까지 쓰고, 높이도 화면만큼 채운다. 쪽 넘기기 버튼은 화면 아래에 붙는다 */
-html,body{height:100%}
-.wrap{max-width:none;min-height:100%;padding-block:.8rem 0;gap:1rem}
-.wrap>section.view{flex:1}
-.wrap>section.view>.panel,.wrap>section.view>.grid2{flex:1}
-.wrap>section.view>.grid2>.panel{align-self:stretch}
+/* 화면 폭을 끝까지 쓰고, 내용은 위에서 아래로 스크롤해서 본다 */
+.wrap{max-width:none;padding-block:.8rem 3rem;gap:1rem}
 .hero{padding:.9rem 1.3rem;border-radius:16px}
 .hero h1{font-size:1.55rem}
 .hero .eyebrow{display:none}
 .hero-art .pb-cover{width:6.2rem;font-size:.42rem}
 .hero-art .pb-cover:last-child{margin-left:-1.6rem}
-.pager{position:sticky;bottom:0;z-index:5;background:var(--bg);padding:.6rem 0 calc(.6rem + env(safe-area-inset-bottom, 0px));border-top:1px solid var(--line)}
 .foot{padding-bottom:.6rem}
 </style>
 
@@ -595,12 +586,6 @@ html,body{height:100%}
       </details>
     </div>
   </section>
-
-  <div class="pager" role="group" aria-label="쪽 넘기기">
-    <button id="pg-prev">◀ 이전</button>
-    <span class="num" id="pg-out" aria-live="polite"></span>
-    <button class="primary" id="pg-next">다음 ▶</button>
-  </div>
 
   <p class="foot">금리 그래프는 오픈소스 <a href="https://github.com/chartjs/Chart.js" target="_blank" rel="noopener">Chart.js</a>(MIT 라이선스)로 그립니다. 금리와 상품은 수업용으로 만든 가짜 값입니다.</p>
 </div>
@@ -1274,40 +1259,12 @@ function route(){
   document.querySelectorAll('nav.tabs a').forEach(function(a){
     if(a.getAttribute('href') === '#'+h) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
   });
-  showPage();
+  if(h === 'sim'){ drawChart(); if(chart) chart.resize(); }
+  try{ window.scrollTo(0, 0); }catch(e){}
 }
 window.addEventListener('hashchange', route);
 
-/* ── 쪽 넘기기: 탭 안의 묶음을 한 쪽씩 보여 준다. 마지막 쪽에서 '다음'을 누르면 다음 탭으로 간다 ── */
-var PAGES = {}, PG = {};
-VIEWS.forEach(function(v){
-  var list = [];
-  Array.prototype.forEach.call($('v-' + v).children, function(el){
-    if(el.hasAttribute('data-split')) Array.prototype.forEach.call(el.children, function(c){ list.push([c]); });
-    else if(el.hasAttribute('data-join') && list.length) list[list.length-1].push(el);
-    else list.push([el]);
-  });
-  PAGES[v] = list; PG[v] = 0;
-});
-function showPage(){
-  var list = PAGES[CUR], i = Math.min(PG[CUR], list.length-1), vi = VIEWS.indexOf(CUR);
-  list.forEach(function(els, k){ els.forEach(function(el){ el.hidden = k !== i; }); });
-  $('pg-out').textContent = (i+1) + ' / ' + list.length;
-  $('pg-prev').disabled = i === 0 && vi === 0;
-  $('pg-next').disabled = i === list.length-1 && vi === VIEWS.length-1;
-  $('pg-next').textContent = i === list.length-1 && vi < VIEWS.length-1 ? '다음 단계 ▶' : '다음 ▶';
-  if(CUR === 'sim'){ drawChart(); if(chart) chart.resize(); }
-}
-function turn(d){
-  stopRead();
-  var list = PAGES[CUR], i = PG[CUR] + d, vi = VIEWS.indexOf(CUR);
-  if(i < 0){ if(vi === 0) return; var p = VIEWS[vi-1]; PG[p] = PAGES[p].length-1; location.hash = p; }
-  else if(i >= list.length){ if(vi === VIEWS.length-1) return; var nx = VIEWS[vi+1]; PG[nx] = 0; location.hash = nx; }
-  else { PG[CUR] = i; showPage(); }
-  try{ window.scrollTo(0, 0); }catch(e){}
-}
-$('pg-prev').addEventListener('click', function(){ turn(-1); });
-$('pg-next').addEventListener('click', function(){ turn(1); });
+
 
 TAXON = get('rate-class-tax', '0') === '1';
 load(); renderCalc(); renderSim(); newQ();
