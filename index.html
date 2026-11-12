@@ -253,6 +253,11 @@ ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--her
 .book tr.end td{font-weight:700;color:var(--dep)}
 .book.s tr.end td{color:var(--sav)}
 .book figcaption{display:flex;flex-direction:column;gap:.4rem}
+/* 통장은 가운데에 놓고, 통장 내역의 글자와 숫자도 칸 가운데에 맞춘다 */
+.book-in{margin-inline:auto}
+.book .face th,.book .face td,.book .face th:nth-child(2),.book .face td:nth-child(2),.book .face th:last-child,.book .face td:last-child{text-align:center}
+.book .bank{text-align:center}
+#c-pb-cover .pb-cover,.kind>.pb-cover{margin-inline:auto}
 /* 화면 폭을 끝까지 쓰고, 내용은 위에서 아래로 스크롤해서 본다 */
 .wrap{max-width:none;padding-block:.8rem 3rem;gap:1rem}
 /* 기본은 양쪽에 20mm 여백. '화면 넓게'를 켜면(.full) 여백 없이 화면 폭을 끝까지 쓴다. 좌은 화면에서는 여백을 두지 않는다 */
