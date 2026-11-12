@@ -3,375 +3,348 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>예금·적금 금리 교실</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hahmlet:wght@600;700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
 <style>
-/* 레이아웃: 통장을 펼친 듯한 한 단 구성. 위에는 다섯 개의 탭, 아래에는 탭마다 '설명 → 직접 해 보기' 순서. */
+/* 레이아웃: 한 화면에 한 가지씩. 위에는 보기 설정과 네 개의 큰 탭, 아래에는 짧은 문장과 큰 숫자, 큰 버튼. 모든 크기는 rem이라 글자 크기 버튼으로 함께 커진다. */
 :root{
-  --bg:#EDF2F0; --surface:#FFFFFF; --sunk:#E2EAE7; --line:#CBD7D2;
-  --ink:#14231F; --muted:#586964;
-  --dep:#2456C8; --dep-soft:#E3EBFB;
-  --sav:#0A7F67; --sav-soft:#DDF2EC;
-  --stamp:#C2332B; --stamp-soft:#FBE7E5;
-  --paper:#FFFFFF; --paper-ink:#111111; /* 학습지는 어느 테마에서나 흰 종이 */
+  --bg:#EDF2F0; --surface:#FFFFFF; --sunk:#E2EAE7; --line:#B9C8C2;
+  --ink:#14231F; --muted:#4C5D58;
+  --dep:#2050BE; --dep-soft:#E3EBFB;
+  --sav:#08735D; --sav-soft:#DDF2EC;
+  --stamp:#B92C24; --stamp-soft:#FBE7E5;
   --display:"Hahmlet","Noto Serif KR",serif;
   --body:"IBM Plex Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif;
   --mono:"IBM Plex Mono","Consolas","Menlo",monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#0F1715; --surface:#18221F; --sunk:#111A18; --line:#2D3B37;
-    --ink:#E6EEEB; --muted:#9AABA5;
-    --dep:#86A9FF; --dep-soft:#1C2A4A;
-    --sav:#52CFAF; --sav-soft:#143A31;
-    --stamp:#FF8177; --stamp-soft:#40201D;
+    --bg:#0F1715; --surface:#18221F; --sunk:#111A18; --line:#3A4A45;
+    --ink:#EDF3F1; --muted:#A9B9B3;
+    --dep:#8FB0FF; --dep-soft:#1C2A4A;
+    --sav:#5AD6B6; --sav-soft:#143A31;
+    --stamp:#FF8B81; --stamp-soft:#40201D;
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#0F1715; --surface:#18221F; --sunk:#111A18; --line:#2D3B37;
-  --ink:#E6EEEB; --muted:#9AABA5;
-  --dep:#86A9FF; --dep-soft:#1C2A4A;
-  --sav:#52CFAF; --sav-soft:#143A31;
-  --stamp:#FF8177; --stamp-soft:#40201D;
+  --bg:#0F1715; --surface:#18221F; --sunk:#111A18; --line:#3A4A45;
+  --ink:#EDF3F1; --muted:#A9B9B3;
+  --dep:#8FB0FF; --dep-soft:#1C2A4A;
+  --sav:#5AD6B6; --sav-soft:#143A31;
+  --stamp:#FF8B81; --stamp-soft:#40201D;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65}
-.wrap{max-width:980px;margin:0 auto;padding-block:28px 64px;
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1.125rem;line-height:1.75;word-break:keep-all}
+.wrap{max-width:980px;margin:0 auto;padding-block:1.25rem 4rem;
   padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
-  display:flex;flex-direction:column;gap:24px}
-h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.3}
-h1{font-size:1.9rem}
-h2{font-size:1.35rem}
-h3{font-size:1.05rem}
+  display:flex;flex-direction:column;gap:1.25rem}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.35}
+h1{font-size:1.8rem}
+h2{font-size:1.4rem}
+h3{font-size:1.15rem}
 p{margin:0}
-.lead{color:var(--muted);max-width:40em}
-.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.lead{max-width:36em}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:600}
 .dep{color:var(--dep)} .sav{color:var(--sav)} .stamp{color:var(--stamp)}
-.top{display:flex;flex-direction:column;gap:8px}
+.cap{font-size:.9rem;color:var(--muted)}
 
-nav.tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:2px solid var(--ink);padding-bottom:0}
-nav.tabs a{padding:9px 14px;text-decoration:none;color:var(--muted);font-weight:500;border:1px solid transparent;border-bottom:none;border-radius:6px 6px 0 0}
-nav.tabs a:hover{color:var(--ink)}
-nav.tabs a[aria-current="page"]{background:var(--ink);color:var(--bg)}
+/* 보기 설정 */
+.tools{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:.6rem .8rem}
+.tools .sp{flex:1}
+.tools b{min-width:3.5em;text-align:center}
+
+nav.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:.4rem}
+nav.tabs a{padding:.7rem .6rem;text-align:center;text-decoration:none;color:var(--ink);font-weight:700;background:var(--surface);border:2px solid var(--line);border-radius:8px}
+nav.tabs a[aria-current="page"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 a{color:var(--dep)}
-a:focus-visible,button:focus-visible,input:focus-visible,label:has(input:focus-visible){outline:2px solid var(--dep);outline-offset:2px}
+a:focus-visible,button:focus-visible,input:focus-visible,label:has(input:focus-visible),summary:focus-visible{outline:3px solid var(--dep);outline-offset:2px}
 
-section.view{display:flex;flex-direction:column;gap:22px}
-.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
-.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
-.kind{border-top:5px solid var(--dep)}
+section.view{display:flex;flex-direction:column;gap:1.25rem}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:1.25rem;display:flex;flex-direction:column;gap:.9rem;min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:1rem}
+.kind{border-top:.4rem solid var(--dep)}
 .kind.s{border-top-color:var(--sav)}
-.kind dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}
-.kind dt{color:var(--muted);font-size:.88rem;white-space:nowrap}
-.kind dd{margin:0}
-.formula{font-family:var(--mono);background:var(--sunk);padding:10px 12px;border-radius:4px;font-size:.9rem;overflow-x:auto}
+.kind ul,.easy{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:.3rem}
+.pic{font-size:2.6rem;line-height:1}
 
-/* 이자가 붙는 기간 그림 */
-.span-fig{display:flex;flex-direction:column;gap:3px}
-.span-row{display:grid;grid-template-columns:3.6em 1fr;gap:8px;align-items:center;font-size:.78rem;color:var(--muted)}
-.span-track{background:var(--sunk);height:12px;border-radius:2px;display:flex;justify-content:flex-end}
-.span-bar{height:100%;border-radius:2px;background:var(--sav)}
-.span-fig.d .span-track{height:100%;min-height:177px}
-.span-fig.d .span-bar{background:var(--dep)}
-.span-fig.d .span-row{flex:1}
-.axis{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);padding-left:calc(3.6em + 8px)}
-.fig-result{font-size:.95rem}
+/* 달력 그림: 언제 돈을 넣는지 */
+.months{display:grid;grid-template-columns:repeat(6,1fr);gap:.3rem}
+.months div{background:var(--sunk);border-radius:6px;padding:.3rem .1rem;text-align:center;font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap:.1rem;min-width:0}
+.months span{font-size:1.5rem;line-height:1.2}
 
-.terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px 24px;margin:0}
-.terms div{border-left:2px solid var(--line);padding-left:12px}
-.terms dt{font-weight:700}
-.terms dd{margin:0;color:var(--muted);font-size:.93rem}
+.words{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.8rem;margin:0}
+.words div{background:var(--sunk);border-radius:6px;padding:.7rem .9rem}
+.words dt{font-weight:700;font-size:1.1rem}
+.words dd{margin:0}
 
 /* 입력 */
-.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px 20px}
-.field{display:flex;flex-direction:column;gap:6px;min-width:0}
-.field>span.lab, legend{font-size:.82rem;color:var(--muted);font-weight:500;padding:0}
-fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;min-width:0}
-.seg{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:5px;overflow:hidden;width:fit-content;max-width:100%}
-.seg label{padding:7px 14px;cursor:pointer;background:var(--surface);border-right:1px solid var(--line);font-weight:500}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:1.1rem 1.4rem}
+.field{display:flex;flex-direction:column;gap:.4rem;min-width:0}
+.field>span.lab, legend{font-weight:700;padding:0}
+fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:.4rem;min-width:0}
+.seg{display:flex;flex-wrap:wrap;border:2px solid var(--line);border-radius:8px;overflow:hidden;width:fit-content;max-width:100%}
+.seg label{padding:.55rem 1.1rem;cursor:pointer;background:var(--surface);border-right:2px solid var(--line);font-weight:700}
 .seg label:last-child{border-right:0}
 .seg input{position:absolute;opacity:0;pointer-events:none}
 .seg label:has(input:checked){background:var(--ink);color:var(--bg)}
-.inp{display:flex;align-items:center;gap:8px}
-input[type=number],input[type=text]{font:inherit;font-family:var(--mono);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:8px 10px;width:100%;min-width:0;max-width:11em}
-input[type=range]{width:100%;accent-color:var(--ink)}
-.unit{color:var(--muted);white-space:nowrap}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
-button{font:inherit;cursor:pointer;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:7px 12px}
+.stepper{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.stepper button{min-width:2.8rem;font-size:1.3rem;font-weight:700;line-height:1}
+input[type=number]{font:inherit;font-family:var(--mono);font-weight:600;font-size:1.15rem;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:.5rem .6rem;width:6.5em;min-width:0;text-align:right}
+.unit{white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+button{font:inherit;cursor:pointer;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:.5rem .9rem;min-height:2.75rem}
 button:hover{border-color:var(--ink)}
 button.primary{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:700}
-button.chip{padding:3px 10px;font-size:.85rem;border-radius:99px}
-button.small{padding:3px 10px;font-size:.85rem}
+button.chip{padding:.3rem .8rem;min-height:2.3rem;border-radius:99px}
 button:disabled{opacity:.45;cursor:not-allowed}
 
-/* 결과 */
-.result{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;align-items:start}
-.big{font-family:var(--mono);font-size:clamp(1.6rem,6vw,2.3rem);font-weight:600;line-height:1.2;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.ledger{display:grid;grid-template-columns:1fr auto;gap:5px 16px;margin:0}
-.ledger dt{color:var(--muted)}
-.ledger dd{margin:0;text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
-.ledger .sum{border-top:1px solid var(--ink);padding-top:6px;font-weight:700;color:var(--ink)}
-ol.steps{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px}
-ol.steps .formula{margin-top:4px}
-.bars{display:flex;align-items:flex-end;gap:1px;height:130px;border-bottom:1px solid var(--ink)}
-.bars i{flex:1;min-width:0;background:var(--dep);border-radius:2px 2px 0 0}
-.bars.s i{background:var(--sav)}
-.cap{font-size:.82rem;color:var(--muted)}
-.note{background:var(--sunk);border-radius:5px;padding:12px 14px;font-size:.95rem}
+/* 결과: 넣은 돈 + 이자 = 받는 돈 */
+.eq{display:flex;flex-wrap:wrap;align-items:stretch;gap:.5rem}
+.eq .box{flex:1 1 9rem;background:var(--sunk);border-radius:8px;padding:.7rem .9rem;display:flex;flex-direction:column;gap:.1rem;min-width:0}
+.eq .box b{font-family:var(--mono);font-size:1.35rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.eq .op{align-self:center;font-size:1.6rem;font-weight:700}
+.eq .box.total{background:var(--ink);color:var(--bg)}
+.eq .box.total b{font-size:1.6rem}
+ol.steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.7rem;counter-reset:st}
+ol.steps li{counter-increment:st;border:2px solid var(--line);border-radius:8px;padding:.7rem .9rem;display:flex;flex-direction:column;gap:.3rem}
+ol.steps li::before{content:counter(st) "단계";font-weight:700;color:var(--muted);font-size:.9rem}
+.formula{font-family:var(--mono);font-weight:600;background:var(--sunk);padding:.5rem .7rem;border-radius:6px;overflow-x:auto;font-size:1.05rem}
+.note{background:var(--sunk);border-radius:8px;padding:.8rem 1rem}
+details summary{cursor:pointer;font-weight:700;padding:.3rem 0}
 
 /* 체험 */
-.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
-.tile{background:var(--surface);padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
-.tile span{font-size:.78rem;color:var(--muted)}
-.tile b{font-family:var(--mono);font-size:1.12rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.news{border-left:4px solid var(--ink);padding:6px 12px;background:var(--sunk)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(10rem,1fr));gap:.5rem}
+.tile{background:var(--sunk);border-radius:8px;padding:.6rem .8rem;display:flex;flex-direction:column;min-width:0}
+.tile span{font-size:.9rem;color:var(--muted)}
+.tile b{font-family:var(--mono);font-size:1.2rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.news{border-left:.35rem solid var(--ink);padding:.5rem .8rem;background:var(--sunk);font-weight:500}
 .scroll{overflow-x:auto}
-.chartbox{position:relative;height:190px;min-width:0}
-table{border-collapse:collapse;width:100%;font-size:.92rem}
-th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.chartbox{position:relative;height:13rem;min-width:0}
+table{border-collapse:collapse;width:100%;font-size:1rem}
+th,td{padding:.45rem .6rem;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
 th:first-child,td:first-child{text-align:left}
-th{font-size:.78rem;color:var(--muted);font-weight:500}
+th{font-size:.9rem;color:var(--muted);font-weight:500}
 td.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.rates button{font-family:var(--mono);min-width:5.2em}
+.rates button{font-family:var(--mono);font-weight:600;min-width:5em}
 .rates button.d[aria-pressed="true"]{background:var(--dep);border-color:var(--dep);color:var(--surface)}
 .rates button.s[aria-pressed="true"]{background:var(--sav);border-color:var(--sav);color:var(--surface)}
-.badge{display:inline-block;padding:1px 8px;border-radius:3px;font-size:.78rem;font-weight:700;background:var(--dep-soft);color:var(--dep)}
+.badge{display:inline-block;padding:.05rem .6rem;border-radius:5px;font-weight:700;background:var(--dep-soft);color:var(--dep)}
 .badge.s{background:var(--sav-soft);color:var(--sav)}
 .badge.r{background:var(--stamp-soft);color:var(--stamp)}
-.hold{display:flex;flex-direction:column;gap:10px}
-.item{border:1px solid var(--line);border-radius:5px;padding:12px;display:flex;flex-direction:column;gap:8px}
-.item .hd{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
-.prog{height:6px;background:var(--sunk);border-radius:3px;overflow:hidden}
+.hold{display:flex;flex-direction:column;gap:.8rem}
+.item{border:2px solid var(--line);border-radius:8px;padding:.9rem;display:flex;flex-direction:column;gap:.6rem}
+.prog{height:.6rem;background:var(--sunk);border-radius:99px;overflow:hidden}
 .prog i{display:block;height:100%;background:var(--dep)}
 .prog.s i{background:var(--sav)}
-.kv{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:.88rem;color:var(--muted)}
-.kv b{color:var(--ink);font-family:var(--mono);font-weight:500}
-.ifclose{font-size:.88rem;background:var(--sunk);border-radius:4px;padding:8px 10px}
-.ewform{border-top:1px dashed var(--line);padding-top:10px;display:flex;flex-direction:column;gap:8px}
-.flash{border:2px solid var(--stamp);border-radius:6px;padding:12px 14px;background:var(--stamp-soft);display:flex;flex-direction:column;gap:6px}
-.err{color:var(--stamp);font-size:.9rem}
-.empty{color:var(--muted);font-size:.93rem}
+.ifclose{background:var(--sunk);border-radius:6px;padding:.5rem .7rem}
+.ewform{border-top:2px dashed var(--line);padding-top:.7rem;display:flex;flex-direction:column;gap:.5rem}
+.flash{border:3px solid var(--stamp);border-radius:8px;padding:.8rem 1rem;background:var(--stamp-soft);display:flex;flex-direction:column;gap:.4rem;font-weight:500}
+.err{color:var(--stamp);font-weight:700}
+.empty{color:var(--muted)}
 svg text{font-family:var(--mono);font-size:11px;fill:var(--muted)}
 svg .grid{stroke:var(--line);stroke-width:1}
 svg .rate{stroke:var(--ink);stroke-width:2;fill:none}
 svg .dot{fill:var(--stamp)}
 svg text.now{fill:var(--stamp);font-weight:600;font-size:12px}
-.ok{color:var(--sav);font-weight:700} .no{color:var(--stamp);font-weight:700}
-.foot{font-size:.8rem;color:var(--muted)}
 
-/* 학습지: 글자 크기는 --ws 하나로 조절, 안쪽은 모두 em */
-.sheet{background:var(--paper);color:var(--paper-ink);font-size:var(--ws,16px);line-height:1.75;padding:2em;border:1px solid var(--line);display:flex;flex-direction:column;gap:1.3em;min-width:0}
-.sheet h2{font-size:1.5em;color:var(--paper-ink)}
-.sheet h3{font-size:1.12em;color:var(--paper-ink);border-bottom:2px solid var(--paper-ink);padding-bottom:.2em}
-.sheet .who{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5em 1.5em;align-items:baseline}
-.sheet .dep,.sheet .sav{color:inherit}
-.sheet table{font-size:1em}
-.sheet th,.sheet td{border:1px solid var(--paper-ink);text-align:left;white-space:normal;color:var(--paper-ink);font-size:1em;padding:.4em .6em;height:2.6em;font-weight:400}
-.sheet th{font-weight:700}
-.sheet ol{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:.9em}
-.sheet .work{border:1px solid var(--paper-ink);min-height:5em;margin-top:.4em;padding:.3em .6em;display:flex;align-items:flex-end;justify-content:flex-end}
-.sheet .line{border-bottom:1px solid var(--paper-ink);height:2.2em}
-.sheet .blank{display:inline-block;min-width:5em;border-bottom:1px solid var(--paper-ink)}
-.sheet section{display:flex;flex-direction:column;gap:.7em}
-.sheet li{break-inside:avoid}
-@media print{
-  body{background:var(--paper)}
-  .top,nav.tabs,.noprint,.foot{display:none!important}
-  section.view{display:none!important}
-  #v-sheet{display:block!important}
-  .wrap{padding:0;max-width:none}
-  .sheet{border:0;padding:0}
-  .sheet .answers{break-before:page}
-}
+/* 문제 */
+.qtext{font-size:1.3rem;font-weight:700}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:.6rem}
+.opts button{font-size:1.2rem;font-weight:700;padding:1rem .8rem;min-height:4rem}
+.opts button.right{background:var(--sav-soft);border-color:var(--sav);color:var(--sav);opacity:1}
+.opts button.wrong{background:var(--stamp-soft);border-color:var(--stamp);color:var(--stamp);opacity:1}
+.ok{color:var(--sav);font-weight:700;font-size:1.25rem} .no{color:var(--stamp);font-weight:700;font-size:1.25rem}
+.foot{font-size:.85rem;color:var(--muted)}
 </style>
 
 <div class="wrap">
-  <header class="top">
+  <header>
     <h1>예금·적금 금리 교실</h1>
-    <p class="lead">예금과 적금이 어떻게 다른지 알아보고, 변하는 금리에 맞춰 1개월부터 5년까지 직접 가입해 만기에 받는 돈을 계산해 봅니다.</p>
   </header>
 
-  <nav class="tabs" aria-label="학습 단계">
-    <a href="#basics">차이 알기</a>
-    <a href="#calc">만기 금액 계산</a>
-    <a href="#sim">금리 변동 가입 체험</a>
-    <a href="#quiz">문제 풀기</a>
-    <a href="#sheet">학습지</a>
+  <div class="tools" role="group" aria-label="보기 설정">
+    <span>글자 크기</span>
+    <button id="z-minus" aria-label="글자 작게">가 −</button>
+    <b class="num" id="z-out">100%</b>
+    <button id="z-plus" aria-label="글자 크게">가 +</button>
+    <button id="z-reset">처음 크기</button>
+    <span class="sp"></span>
+    <button id="tts">🔊 읽어 주기</button>
+    <button id="tts-stop" hidden>■ 그만 읽기</button>
+  </div>
+
+  <nav class="tabs" aria-label="배우는 순서">
+    <a href="#basics">① 예금과 적금</a>
+    <a href="#calc">② 계산하기</a>
+    <a href="#sim">③ 가입해 보기</a>
+    <a href="#quiz">④ 문제 풀기</a>
   </nav>
 
-  <!-- ───────── 차이 알기 ───────── -->
+  <!-- ───────── ① 예금과 적금 ───────── -->
   <section class="view" id="v-basics">
+    <div class="panel" data-read>
+      <h2>은행에 돈을 맡기면 이자를 받아요</h2>
+      <p class="lead">은행에 돈을 맡기면 은행이 돈을 조금 더 줘요. 더 주는 돈이 <b>이자</b>예요. 돈을 맡기는 방법은 두 가지예요.</p>
+    </div>
+
     <div class="grid2">
-      <div class="panel kind">
-        <h2 class="dep">정기예금</h2>
-        <p>목돈을 <strong>한 번에</strong> 맡기고 만기까지 그대로 두는 상품입니다.</p>
-        <dl>
-          <dt>돈 넣는 법</dt><dd>가입할 때 한 번</dd>
-          <dt>어울리는 때</dt><dd>이미 모아 둔 목돈을 불릴 때</dd>
-          <dt>이자가 붙는 돈</dt><dd>맡긴 돈 전체가 처음부터 끝까지</dd>
-        </dl>
-        <div class="formula">이자 = 맡긴 돈 × 연이율 × 개월 수 ÷ 12</div>
+      <div class="panel kind" data-read>
+        <div class="pic" aria-hidden="true">💰</div>
+        <h2 class="dep">예금</h2>
+        <p><b>큰돈을 한 번에</b> 맡겨요.</p>
+        <ul>
+          <li>돈은 처음에 한 번만 넣어요.</li>
+          <li>약속한 날까지 기다려요.</li>
+          <li>모아 둔 돈이 있을 때 좋아요.</li>
+        </ul>
+        <div class="months" id="pic-dep" aria-hidden="true"></div>
       </div>
-      <div class="panel kind s">
-        <h2 class="sav">정기적금</h2>
-        <p><strong>매달 일정한 금액</strong>을 넣어 목돈을 만들어 가는 상품입니다.</p>
-        <dl>
-          <dt>돈 넣는 법</dt><dd>매달 한 번씩, 만기까지</dd>
-          <dt>어울리는 때</dt><dd>용돈·월급으로 목돈을 모을 때</dd>
-          <dt>이자가 붙는 돈</dt><dd>넣은 달부터 만기까지만 (늦게 넣은 돈일수록 짧게)</dd>
-        </dl>
-        <div class="formula">이자 = 월 납입액 × 연이율 ÷ 12 × n(n+1) ÷ 2</div>
+      <div class="panel kind s" data-read>
+        <div class="pic" aria-hidden="true">🪙🪙🪙</div>
+        <h2 class="sav">적금</h2>
+        <p><b>매달 조금씩</b> 넣어요.</p>
+        <ul>
+          <li>돈을 매달 한 번씩 넣어요.</li>
+          <li>약속한 날까지 계속 넣어요.</li>
+          <li>돈을 모으고 싶을 때 좋아요.</li>
+        </ul>
+        <div class="months" id="pic-sav" aria-hidden="true"></div>
       </div>
     </div>
 
-    <div class="panel">
-      <h2>같은 금리인데 왜 이자가 다를까</h2>
-      <p class="lead">연 3%, 12개월 동안 모두 120만 원을 넣는 두 가지 방법입니다. 막대 길이는 그 돈에 이자가 붙는 기간입니다.</p>
-      <div class="grid2">
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <h3 class="dep">예금: 120만 원을 한 번에</h3>
-          <div class="span-fig d" id="fig-dep"></div>
-          <div class="axis"><span>가입</span><span>12개월 만기</span></div>
-          <p class="fig-result">120만 원 전체에 12개월 이자 → 세전 이자 <b class="num dep">36,000원</b></p>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <h3 class="sav">적금: 10만 원씩 12번</h3>
-          <div class="span-fig" id="fig-sav"></div>
-          <div class="axis"><span>가입</span><span>12개월 만기</span></div>
-          <p class="fig-result">첫 달 돈은 12개월, 마지막 달 돈은 1개월 이자 → 세전 이자 <b class="num sav">19,500원</b></p>
-        </div>
-      </div>
-      <p class="note">적금 금리가 예금보다 높게 보여도, 나중에 넣은 돈은 이자가 붙는 기간이 짧습니다. 그래서 같은 금리라면 적금 이자는 예금 이자의 절반을 조금 넘는 수준입니다.</p>
-    </div>
-
-    <div class="panel">
-      <h2>꼭 알아야 할 말</h2>
-      <dl class="terms">
-        <div><dt>금리(연이율)</dt><dd>1년 동안 맡겼을 때 붙는 이자의 비율. 6개월만 맡기면 그 절반만 받습니다.</dd></div>
-        <div><dt>만기</dt><dd>약속한 기간이 끝나 원금과 이자를 돌려받는 날.</dd></div>
-        <div><dt>단리와 복리</dt><dd>단리는 원금에만, 복리는 이자에도 다시 이자가 붙습니다.</dd></div>
-        <div><dt>세전·세후</dt><dd>이자에서 이자소득세 15.4%(소득세 14% + 지방소득세 1.4%)를 떼고 받습니다.</dd></div>
-        <div><dt>고정금리</dt><dd>가입한 날의 금리가 만기까지 유지됩니다. 가입 뒤 시장 금리가 바뀌어도 내 금리는 그대로입니다.</dd></div>
-        <div><dt>중도해지</dt><dd>만기 전에 깨면 약속한 금리보다 훨씬 낮은 중도해지 금리만 받습니다. 오래 유지했을수록 조금 더 받습니다.</dd></div>
-        <div><dt>긴급출금</dt><dd>해지하지 않고 일부만 꺼내는 것. 꺼낸 돈에만 중도해지 금리가 적용되고 남은 돈은 약속한 금리를 지킵니다. 보통 횟수 제한이 있습니다.</dd></div>
+    <div class="panel" data-read>
+      <h2>알아 두면 좋은 말</h2>
+      <dl class="words">
+        <div><dt>이자</dt><dd>은행이 더 주는 돈이에요.</dd></div>
+        <div><dt>금리</dt><dd>이자를 얼마나 주는지 알려 주는 숫자예요. 연 3%는 100만 원을 1년 맡기면 3만 원을 준다는 뜻이에요.</dd></div>
+        <div><dt>만기</dt><dd>약속한 기간이 끝나는 날이에요. 이날 돈과 이자를 받아요.</dd></div>
+        <div><dt>중도해지 (깨기)</dt><dd>만기 전에 그만두는 거예요. 이자를 아주 조금만 받아요.</dd></div>
+        <div><dt>긴급출금 (조금 꺼내기)</dt><dd>급할 때 돈을 조금만 꺼내는 거예요. 2번까지 할 수 있어요.</dd></div>
       </dl>
     </div>
 
-    <div class="panel">
-      <h2>금리가 변할 때 고르는 요령</h2>
-      <div class="grid2">
-        <p class="note"><b>금리가 내려갈 것 같다면</b><br>지금의 높은 금리를 오래 묶어 두는 긴 만기(2~5년)가 유리합니다.</p>
-        <p class="note"><b>금리가 올라갈 것 같다면</b><br>짧은 만기(1~6개월)로 가입하고, 만기 때 오른 금리로 다시 가입합니다.</p>
-      </div>
-      <p><a href="#sim">금리 변동 가입 체험</a>에서 직접 확인해 보세요.</p>
+    <div class="panel" data-read>
+      <h2>금리는 바뀌어요</h2>
+      <ul class="easy">
+        <li>금리는 올라가기도 하고 내려가기도 해요.</li>
+        <li>가입할 때 정한 금리는 만기까지 <b>그대로</b>예요.</li>
+        <li>금리가 <b>높을 때</b>는 <b>길게</b> 가입하면 좋아요.</li>
+        <li>금리가 <b>낮을 때</b>는 <b>짧게</b> 가입하고 기다려요.</li>
+      </ul>
+      <div><a href="#calc"><b>다음: ② 계산하기 →</b></a></div>
     </div>
   </section>
 
-  <!-- ───────── 계산 ───────── -->
+  <!-- ───────── ② 계산하기 ───────── -->
   <section class="view" id="v-calc" hidden>
     <div class="panel">
-      <h2>조건을 정해 보세요</h2>
+      <h2>골라 보세요</h2>
       <div class="form">
         <fieldset>
-          <legend>상품</legend>
+          <legend>무엇에 가입할까요?</legend>
           <div class="seg">
-            <label><input type="radio" name="c-type" id="c-type-dep" value="dep" checked>예금</label>
-            <label><input type="radio" name="c-type" id="c-type-sav" value="sav">적금</label>
+            <label><input type="radio" name="c-type" id="c-type-dep" value="dep" checked>💰 예금</label>
+            <label><input type="radio" name="c-type" id="c-type-sav" value="sav">🪙 적금</label>
           </div>
         </fieldset>
-        <label class="field"><span class="lab" id="c-amt-lab">맡길 금액</span>
-          <span class="inp"><input type="number" id="c-amt" min="1" step="1" value="500" inputmode="numeric"><span class="unit">만 원</span></span>
-        </label>
-        <label class="field"><span class="lab">금리 (연)</span>
-          <span class="inp"><input type="number" id="c-rate" min="0" max="20" step="0.05" value="3.5" inputmode="decimal"><span class="unit">%</span></span>
-          <input type="range" id="c-rate-r" min="0.5" max="8" step="0.05" value="3.5" aria-label="금리 조절">
-        </label>
-        <div class="field"><span class="lab">가입 기간: <b id="c-term-out" class="num"></b></span>
-          <input type="range" id="c-term" min="1" max="60" step="1" value="12" aria-label="가입 기간(개월)">
+        <div class="field"><span class="lab" id="c-amt-lab">맡길 돈</span>
+          <div class="stepper">
+            <button data-for="c-amt" data-step="-1" aria-label="돈 줄이기">−</button>
+            <input type="number" id="c-amt" min="1" max="100000" step="100" value="500" inputmode="numeric" aria-labelledby="c-amt-lab"><span class="unit">만 원</span>
+            <button data-for="c-amt" data-step="1" aria-label="돈 늘리기">+</button>
+          </div>
+        </div>
+        <div class="field"><span class="lab" id="c-rate-lab">금리 (1년에 몇 %)</span>
+          <div class="stepper">
+            <button data-for="c-rate" data-step="-1" aria-label="금리 내리기">−</button>
+            <input type="number" id="c-rate" min="0.5" max="20" step="0.5" value="3" inputmode="decimal" aria-labelledby="c-rate-lab"><span class="unit">%</span>
+            <button data-for="c-rate" data-step="1" aria-label="금리 올리기">+</button>
+          </div>
+          <div class="chips" id="c-rate-chips"></div>
+        </div>
+        <div class="field"><span class="lab" id="c-term-lab">기간 (몇 달 동안)</span>
+          <div class="stepper">
+            <button data-for="c-term" data-step="-1" aria-label="기간 줄이기">−</button>
+            <input type="number" id="c-term" min="1" max="60" step="1" value="12" inputmode="numeric" aria-labelledby="c-term-lab"><span class="unit">개월</span>
+            <button data-for="c-term" data-step="1" aria-label="기간 늘리기">+</button>
+          </div>
           <div class="chips" id="c-chips"></div>
         </div>
         <fieldset>
-          <legend>이자 계산 방식</legend>
-          <div class="seg">
-            <label><input type="radio" name="c-comp" id="c-comp-s" value="0" checked>단리</label>
-            <label><input type="radio" name="c-comp" id="c-comp-c" value="1">월복리</label>
-          </div>
-        </fieldset>
-        <fieldset>
           <legend>세금</legend>
           <div class="seg">
-            <label><input type="radio" name="c-tax" id="c-tax-n" value="0.154" checked>일반과세 15.4%</label>
-            <label><input type="radio" name="c-tax" id="c-tax-f" value="0">비과세</label>
+            <label><input type="radio" name="c-tax" id="c-tax-off" value="0" checked>세금 빼고 쉽게</label>
+            <label><input type="radio" name="c-tax" id="c-tax-on" value="1">세금도 계산</label>
           </div>
         </fieldset>
       </div>
     </div>
 
-    <div class="panel">
-      <div class="result">
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <span class="cap">만기에 받는 금액 (세후)</span>
-          <div class="big" id="c-total"></div>
-          <span class="cap" id="c-yield"></span>
-        </div>
-        <dl class="ledger" id="c-ledger"></dl>
-      </div>
-      <div>
-        <div class="bars" id="c-bars"></div>
-        <div class="cap" id="c-bars-cap" style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:4px"></div>
-      </div>
-      <p class="note" id="c-compare"></p>
+    <div class="panel" data-read>
+      <h2>만기에 받는 돈</h2>
+      <div class="eq" id="c-eq"></div>
     </div>
 
-    <div class="panel">
-      <h2>이렇게 계산합니다</h2>
+    <div class="panel" data-read>
+      <h2>계산하는 방법</h2>
       <ol class="steps" id="c-steps"></ol>
+      <details id="c-detail"><summary>달마다 이자 보기</summary><div class="scroll" id="c-table"></div></details>
     </div>
   </section>
 
-  <!-- ───────── 체험 ───────── -->
+  <!-- ───────── ③ 가입해 보기 ───────── -->
   <section class="view" id="v-sim" hidden>
     <div class="panel">
-      <h2>금리는 매달 달라집니다</h2>
-      <p class="lead">가상의 은행에서 1,000만 원으로 시작합니다. 매달 용돈 50만 원이 들어옵니다. 상품과 기간을 정해 가입하고, 시간을 보내 만기에 받는 돈을 확인하세요. 가입한 상품의 금리는 만기까지 바뀌지 않습니다.</p>
-      <div class="tiles" id="s-tiles"></div>
-      <p class="news" id="s-news"></p>
-      <div class="chartbox" id="s-canvas-box" hidden><canvas id="s-canvas" role="img" aria-label="기준금리 변화 그래프"></canvas></div>
-      <div class="scroll" id="s-svg-box"><svg id="s-chart" viewBox="0 0 640 170" width="100%" style="min-width:420px;display:block" role="img" aria-label="기준금리 변화 그래프"></svg></div>
-      <div class="row">
-        <fieldset>
-          <legend>금리 변동 방식</legend>
-          <div class="seg">
-            <label><input type="radio" name="s-auto" id="s-auto-on" value="1" checked>매달 자동 변동</label>
-            <label><input type="radio" name="s-auto" id="s-auto-off" value="0">직접 정한 금리 유지</label>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>기준금리 직접 조정</legend>
-          <div class="row">
-            <button id="s-down" aria-label="기준금리 0.25%p 내리기">▼ 0.25%p</button>
-            <button id="s-up" aria-label="기준금리 0.25%p 올리기">▲ 0.25%p</button>
-          </div>
-        </fieldset>
-      </div>
+      <h2>은행 놀이</h2>
+      <p class="lead" data-read>1,000만 원으로 시작해요. 매달 용돈 50만 원이 들어와요. 예금이나 적금에 가입하고, 시간을 보내서 받는 돈을 확인해요.</p>
+      <div class="tiles" id="s-tiles" data-read></div>
+      <p class="news" id="s-news" data-read></p>
+      <div class="chartbox" id="s-canvas-box" hidden><canvas id="s-canvas" role="img" aria-label="금리가 바뀐 그래프"></canvas></div>
+      <div class="scroll" id="s-svg-box"><svg id="s-chart" viewBox="0 0 640 170" width="100%" style="min-width:420px;display:block" role="img" aria-label="금리가 바뀐 그래프"></svg></div>
       <div class="row">
         <button class="primary" id="s-next">다음 달로 ▶</button>
         <button id="s-next6">6개월 보내기 ▶▶</button>
         <button id="s-reset">처음부터 다시</button>
       </div>
-      <div id="s-flash" hidden></div>
+      <div id="s-flash" hidden data-read></div>
+      <details>
+        <summary>금리 바꾸기 (선생님용)</summary>
+        <div class="row" style="padding-top:.5rem">
+          <fieldset>
+            <legend>금리가 바뀌는 방법</legend>
+            <div class="seg">
+              <label><input type="radio" name="s-auto" id="s-auto-on" value="1" checked>매달 저절로 바뀜</label>
+              <label><input type="radio" name="s-auto" id="s-auto-off" value="0">내가 정한 대로</label>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>기준금리 직접 바꾸기</legend>
+            <div class="row">
+              <button id="s-down" aria-label="기준금리 0.25 내리기">▼ 내리기</button>
+              <button id="s-up" aria-label="기준금리 0.25 올리기">▲ 올리기</button>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>세금</legend>
+            <div class="seg">
+              <label><input type="radio" name="s-tax" id="s-tax-off" value="0" checked>세금 빼고 쉽게</label>
+              <label><input type="radio" name="s-tax" id="s-tax-on" value="1">세금도 계산</label>
+            </div>
+          </fieldset>
+        </div>
+      </details>
     </div>
 
     <div class="grid2">
       <div class="panel">
-        <h2>이번 달 금리표</h2>
-        <p class="cap">금리를 누르면 오른쪽 가입 조건에 들어갑니다. 연이율, 단리, 세전 기준입니다.</p>
+        <h2>이번 달 금리</h2>
+        <p class="cap">숫자가 클수록 이자를 많이 줘요. 숫자를 누르면 골라져요.</p>
         <div class="scroll">
           <table class="rates">
-            <thead><tr><th>기간</th><th>예금</th><th>적금</th></tr></thead>
+            <thead><tr><th>기간</th><th>💰 예금</th><th>🪙 적금</th></tr></thead>
             <tbody id="s-rates"></tbody>
           </table>
         </div>
@@ -379,89 +352,63 @@ svg text.now{fill:var(--stamp);font-weight:600;font-size:12px}
       <div class="panel">
         <h2>가입하기</h2>
         <fieldset>
-          <legend>상품</legend>
+          <legend>무엇에 가입할까요?</legend>
           <div class="seg">
-            <label><input type="radio" name="s-type" id="s-type-dep" value="dep" checked>예금</label>
-            <label><input type="radio" name="s-type" id="s-type-sav" value="sav">적금</label>
+            <label><input type="radio" name="s-type" id="s-type-dep" value="dep" checked>💰 예금</label>
+            <label><input type="radio" name="s-type" id="s-type-sav" value="sav">🪙 적금</label>
           </div>
         </fieldset>
-        <div class="field"><span class="lab">가입 기간 (1개월 ~ 60개월)</span>
-          <span class="inp"><input type="number" id="s-term" min="1" max="60" step="1" value="12" inputmode="numeric" aria-label="가입 기간(개월)"><span class="unit">개월</span></span>
-          <input type="range" id="s-term-r" min="1" max="60" step="1" value="12" aria-label="가입 기간 조절">
+        <div class="field"><span class="lab" id="s-term-lab">기간 (1개월 ~ 60개월)</span>
+          <div class="stepper">
+            <button data-for="s-term" data-step="-1" aria-label="기간 줄이기">−</button>
+            <input type="number" id="s-term" min="1" max="60" step="1" value="12" inputmode="numeric" aria-labelledby="s-term-lab"><span class="unit">개월</span>
+            <button data-for="s-term" data-step="1" aria-label="기간 늘리기">+</button>
+          </div>
         </div>
-        <label class="field"><span class="lab" id="s-amt-lab">맡길 금액</span>
-          <span class="inp"><input type="number" id="s-amt" min="1" step="1" value="300" inputmode="numeric"><span class="unit">만 원</span></span>
-        </label>
+        <div class="field"><span class="lab" id="s-amt-lab">맡길 돈</span>
+          <div class="stepper">
+            <button data-for="s-amt" data-step="-1" aria-label="돈 줄이기">−</button>
+            <input type="number" id="s-amt" min="1" max="100000" step="100" value="300" inputmode="numeric" aria-labelledby="s-amt-lab"><span class="unit">만 원</span>
+            <button data-for="s-amt" data-step="1" aria-label="돈 늘리기">+</button>
+          </div>
+        </div>
         <p id="s-pick"></p>
-        <dl class="ledger" id="s-preview"></dl>
+        <div class="eq" id="s-preview"></div>
         <p class="err" id="s-err" hidden></p>
         <div><button class="primary" id="s-do">가입하기</button></div>
       </div>
     </div>
 
     <div class="panel">
-      <h2>가입한 상품</h2>
-      <p class="cap">중도해지 금리 = 약정 금리 × 50% × (지난 개월 ÷ 약정 개월), 최저 연 0.10%. 긴급출금은 상품마다 2번까지 할 수 있고, 꺼낸 돈에만 중도해지 금리가 적용됩니다.</p>
+      <h2>내가 가입한 것</h2>
+      <ul class="easy cap">
+        <li><b>조금 꺼내기</b>(긴급출금): 2번까지 할 수 있어요. 꺼낸 돈은 이자를 조금만 받아요.</li>
+        <li><b>깨기</b>(중도해지): 만기 전에 그만두면 이자를 조금만 받아요. 오래 기다릴수록 조금 더 받아요.</li>
+      </ul>
       <div class="hold" id="s-hold"></div>
     </div>
 
     <div class="panel">
-      <h2>받은 내역</h2>
+      <h2>받은 돈 기록</h2>
       <div class="scroll" id="s-log"></div>
     </div>
   </section>
 
-  <!-- ───────── 문제 ───────── -->
+  <!-- ───────── ④ 문제 풀기 ───────── -->
   <section class="view" id="v-quiz" hidden>
     <div class="panel">
       <div class="row" style="justify-content:space-between">
-        <h2>직접 계산해 보기</h2>
+        <h2>알맞은 답을 눌러요</h2>
         <span class="num" id="q-score"></span>
       </div>
-      <p id="q-text" style="font-size:1.08rem"></p>
-      <p class="cap">단리로 계산하고, 원 미만은 버립니다. 세금은 이자의 15.4%입니다.</p>
-      <div class="row">
-        <label class="inp" for="q-ans"><input type="text" id="q-ans" inputmode="numeric" placeholder="답" autocomplete="off"><span class="unit">원</span></label>
-        <button class="primary" id="q-check">확인</button>
-        <button id="q-next">다음 문제</button>
-      </div>
-      <p id="q-result" hidden></p>
-      <ol class="steps" id="q-steps" hidden></ol>
+      <p class="qtext" id="q-text" data-read></p>
+      <div class="opts" id="q-opts"></div>
+      <div id="q-result" hidden data-read style="display:flex;flex-direction:column;gap:.6rem"></div>
+      <div><button class="primary" id="q-next">다음 문제 ▶</button></div>
     </div>
   </section>
 
-  <!-- ───────── 학습지 ───────── -->
-  <section class="view" id="v-sheet" hidden>
-    <div class="panel noprint">
-      <h2>학습지 만들기</h2>
-      <div class="form">
-        <div class="field"><span class="lab">글자 크기: <b class="num" id="w-size-out"></b></span>
-          <div class="row" style="flex-wrap:nowrap">
-            <button id="w-minus" aria-label="글자 작게">가−</button>
-            <input type="range" id="w-size" min="12" max="28" step="1" value="16" aria-label="학습지 글자 크기">
-            <button id="w-plus" aria-label="글자 크게">가+</button>
-          </div>
-        </div>
-        <fieldset>
-          <legend>정답지</legend>
-          <div class="seg">
-            <label><input type="radio" name="w-ans" id="w-ans-off" value="0" checked>빼기</label>
-            <label><input type="radio" name="w-ans" id="w-ans-on" value="1">마지막 쪽에 넣기</label>
-          </div>
-        </fieldset>
-        <div class="field"><span class="lab">계산 문제</span>
-          <div><button id="w-new">문제 새로 만들기</button></div>
-        </div>
-        <div class="field"><span class="lab">출력</span>
-          <div><button class="primary" id="w-print">인쇄하기</button></div>
-          <p class="cap" id="w-print-note" hidden>이 미리보기 화면에서는 인쇄가 막혀 있습니다. index.html 파일을 브라우저에서 직접 열면 인쇄 버튼이 나타납니다.</p>
-        </div>
-      </div>
-    </div>
-    <article class="sheet" id="sheet"></article>
-  </section>
-
-  <p class="foot">금리 그래프는 오픈소스 <a href="https://github.com/chartjs/Chart.js" target="_blank" rel="noopener">Chart.js</a>(MIT 라이선스)로 그립니다. 금리와 상품은 수업용으로 만든 가상의 값입니다.</p>
+  <p class="foot">금리 그래프는 오픈소스 <a href="https://github.com/chartjs/Chart.js" target="_blank" rel="noopener">Chart.js</a>(MIT 라이선스)로 그립니다. 금리와 상품은 수업용으로 만든 가짜 값입니다.</p>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -470,13 +417,20 @@ svg text.now{fill:var(--stamp);font-weight:600;font-size:12px}
 "use strict";
 var $ = function(id){ return document.getElementById(id); };
 var TERMS = [1,3,6,12,24,36,60];
-var TAX = 0.154;
+var TAXON = false, SCALE = 1;
+function taxRate(){ return TAXON ? 0.154 : 0; }
 function r2(x){ return Math.round(x*100)/100; }
-function won(x){ return Math.round(x).toLocaleString('ko-KR') + '원'; }
-function man(x){ // 원 → 읽기 쉬운 만 원 표기
-  var m = x/10000;
-  return (Number.isInteger(m) ? m.toLocaleString('ko-KR') : m.toLocaleString('ko-KR',{maximumFractionDigits:1})) + '만 원';
+/* 돈은 '만' 단위로 끊어 읽기 쉽게: 1,230,456 → 123만 456원 */
+function won(x){
+  x = Math.round(x);
+  var neg = x < 0; if(neg) x = -x;
+  var m = Math.floor(x/10000), r = x % 10000, s;
+  if(m && r) s = m.toLocaleString('ko-KR') + '만 ' + r.toLocaleString('ko-KR') + '원';
+  else if(m) s = m.toLocaleString('ko-KR') + '만 원';
+  else s = r.toLocaleString('ko-KR') + '원';
+  return (neg ? '−' : '') + s;
 }
+function wonF(x){ return Math.abs(x - Math.round(x)) < 0.05 ? won(x) : x.toLocaleString('ko-KR', {maximumFractionDigits:1}) + '원'; }
 function termText(n){
   if(n < 12) return n + '개월';
   var y = Math.floor(n/12), m = n%12;
@@ -484,97 +438,101 @@ function termText(n){
 }
 function termShort(t){ return t < 12 || t % 12 ? t + '개월' : (t/12) + '년'; }
 function pct(r){ return r2(r).toFixed(2) + '%'; }
+function radio(name){ var e = document.querySelector('input[name="'+name+'"]:checked'); return e ? e.value : null; }
+function get(k, d){ try{ var v = localStorage.getItem(k); return v === null ? d : v; }catch(e){ return d; } }
+function put(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
 
-/* 만기 계산: type 'dep' 예금 / 'sav' 적금, amt 원, n 개월, r 연이율(%), comp 월복리 여부 */
-function calc(type, amt, n, r, comp, taxRate){
+/* 만기 계산 (단리): type 'dep' 예금 / 'sav' 적금, amt 원, n 개월, r 연이율(%) */
+function calc(type, amt, n, r, tax){
   var mr = r/100/12, principal, interest;
-  if(type === 'dep'){
-    principal = amt;
-    interest = comp ? amt*(Math.pow(1+mr,n)-1) : amt*mr*n;
-  } else {
-    principal = amt*n;
-    if(comp && mr > 0) interest = amt*(1+mr)*(Math.pow(1+mr,n)-1)/mr - principal;
-    else interest = amt*mr*n*(n+1)/2;
-  }
+  if(type === 'dep'){ principal = amt; interest = amt*mr*n; }
+  else { principal = amt*n; interest = amt*mr*n*(n+1)/2; }
   interest = Math.floor(interest + 1e-6);
-  var tax = Math.floor(interest*taxRate + 1e-6);
-  return {principal:principal, interest:interest, tax:tax, net:interest-tax, total:principal+interest-tax};
+  var t = Math.floor(interest*tax + 1e-6);
+  return {principal:principal, interest:interest, tax:t, net:interest-t, total:principal+interest-t};
 }
-function stepsHTML(type, amt, n, r, comp, taxRate){
-  var c = calc(type, amt, n, r, comp, taxRate), h = [];
+function eqHTML(c, tax){
+  return '<div class="box"><span>넣은 돈</span><b>' + won(c.principal) + '</b></div><span class="op">+</span>' +
+    '<div class="box"><span>이자</span><b>' + won(c.interest) + '</b></div>' +
+    (tax ? '<span class="op">−</span><div class="box"><span>세금</span><b>' + won(c.tax) + '</b></div>' : '') +
+    '<span class="op">=</span><div class="box total"><span>받는 돈</span><b>' + won(c.total) + '</b></div>';
+}
+/* 금액·금리·기간에 맞춰 계산 방법을 단계별로 만든다 */
+function stepsHTML(type, amt, n, r, tax){
+  var c = calc(type, amt, n, r, tax), h = [];
   if(type === 'dep'){
-    h.push('<li>원금은 처음에 맡긴 돈 그대로입니다.<div class="formula">원금 = ' + won(amt) + '</div></li>');
-    if(comp) h.push('<li>월복리는 매달 이자가 원금에 더해져 다음 달 이자를 계산합니다.<div class="formula">세전 이자 = ' + won(amt) + ' × ((1 + ' + r + '% ÷ 12)<sup>' + n + '</sup> − 1) = ' + won(c.interest) + '</div></li>');
-    else h.push('<li>연이율은 1년 기준이므로 ' + n + '개월분만 받습니다.<div class="formula">세전 이자 = ' + won(amt) + ' × ' + r + '% × ' + n + ' ÷ 12 = ' + won(c.interest) + '</div></li>');
+    var y1 = amt*r/100;
+    h.push('<li>넣은 돈을 확인해요.<div class="formula">넣은 돈 = ' + won(amt) + '</div></li>');
+    h.push('<li>1년 이자를 구해요. 넣은 돈에 금리를 곱해요.<div class="formula">' + won(amt) + ' × ' + r + '% = ' + wonF(y1) + '</div></li>');
+    if(n === 12) h.push('<li>기간이 딱 1년(12개월)이에요. 1년 이자를 그대로 받아요.<div class="formula">이자 = ' + won(c.interest) + '</div></li>');
+    else h.push('<li>' + n + '개월만큼만 받아요. 12로 나누고 ' + n + '을 곱해요.<div class="formula">' + wonF(y1) + ' ÷ 12 × ' + n + ' = ' + won(c.interest) + '</div></li>');
   } else {
-    var k = n*(n+1)/2;
-    h.push('<li>원금은 매달 넣은 돈을 모두 더한 값입니다.<div class="formula">원금 = ' + won(amt) + ' × ' + n + '회 = ' + won(c.principal) + '</div></li>');
-    if(comp) h.push('<li>월복리는 회차마다 넣은 돈이 남은 개월 수만큼 복리로 불어납니다.<div class="formula">세전 이자 = 각 회차 ' + won(amt) + ' × (1 + ' + r + '% ÷ 12)<sup>남은 개월</sup> 의 합 − 원금 = ' + won(c.interest) + '</div></li>');
-    else {
-      h.push('<li>넣은 달마다 이자가 붙는 기간이 다릅니다. 첫 회차는 ' + n + '개월, 마지막 회차는 1개월입니다.<div class="formula">' + (n > 3 ? n + ' + ' + (n-1) + ' + … + 1' : (n === 3 ? '3 + 2 + 1' : n === 2 ? '2 + 1' : '1')) + ' = ' + n + ' × ' + (n+1) + ' ÷ 2 = ' + k + '개월분</div></li>');
-      h.push('<li>한 달분 이자에 그 개월 수를 곱합니다.<div class="formula">세전 이자 = ' + won(amt) + ' × ' + r + '% ÷ 12 × ' + k + ' = ' + won(c.interest) + '</div></li>');
-    }
+    var u = amt*r/100/12, k = n*(n+1)/2;
+    h.push('<li>넣은 돈을 모두 더해요. 매달 넣는 돈에 횟수를 곱해요.<div class="formula">' + won(amt) + ' × ' + n + '번 = ' + won(c.principal) + '</div></li>');
+    h.push('<li>한 번 넣은 돈의 한 달 이자를 구해요.<div class="formula">' + won(amt) + ' × ' + r + '% ÷ 12 = ' + wonF(u) + '</div></li>');
+    h.push('<li>이자가 붙는 달 수를 모두 더해요. 처음 넣은 돈은 ' + n + '달, 마지막에 넣은 돈은 1달이에요.<div class="formula">' + (n > 3 ? n + ' + ' + (n-1) + ' + … + 1' : (n === 3 ? '3 + 2 + 1' : n === 2 ? '2 + 1' : '1')) + ' = ' + k + '달</div></li>');
+    h.push('<li>한 달 이자에 달 수를 곱해요.<div class="formula">' + wonF(u) + ' × ' + k + ' = ' + won(c.interest) + '</div></li>');
   }
-  if(taxRate > 0) h.push('<li>이자에서 세금을 뗍니다.<div class="formula">세금 = ' + won(c.interest) + ' × 15.4% = ' + won(c.tax) + '</div></li>');
-  else h.push('<li>비과세라서 세금이 없습니다.<div class="formula">세금 = 0원</div></li>');
-  h.push('<li>원금에 세후 이자를 더하면 만기에 받는 돈입니다.<div class="formula">' + won(c.principal) + ' + ' + won(c.interest) + ' − ' + won(c.tax) + ' = ' + won(c.total) + '</div></li>');
+  if(tax) h.push('<li>이자에서 세금을 내요. 세금은 이자의 15.4%예요.<div class="formula">' + won(c.interest) + ' × 15.4% = ' + won(c.tax) + '</div></li>');
+  h.push('<li>넣은 돈에 이자를 더해요.' + (tax ? ' 세금은 빼요.' : '') + '<div class="formula">' + won(c.principal) + ' + ' + won(c.interest) + (tax ? ' − ' + won(c.tax) : '') + ' = ' + won(c.total) + '</div></li>');
   return h.join('');
 }
 
-/* ── 차이 알기 그림 ── */
+/* ── ① 달력 그림 ── */
 (function(){
-  var s = '';
-  for(var k=1;k<=12;k++) s += '<div class="span-row"><span>' + k + '회차</span><div class="span-track"><div class="span-bar" style="width:' + ((13-k)/12*100) + '%"></div></div></div>';
-  $('fig-sav').innerHTML = s;
-  $('fig-dep').innerHTML = '<div class="span-row"><span>120만 원</span><div class="span-track"><div class="span-bar" style="width:100%"></div></div></div>';
+  var d = '', s = '';
+  for(var k = 1; k <= 6; k++){
+    d += '<div>' + k + '월<span>' + (k === 1 ? '💰' : '⏳') + '</span></div>';
+    s += '<div>' + k + '월<span>🪙</span></div>';
+  }
+  $('pic-dep').innerHTML = d; $('pic-sav').innerHTML = s;
 })();
 
-/* ── 계산기 ── */
-function radio(name){ var e = document.querySelector('input[name="'+name+'"]:checked'); return e ? e.value : null; }
+/* ── − + 버튼 ── */
+document.addEventListener('click', function(e){
+  var b = e.target.closest('button[data-for]'); if(!b) return;
+  var inp = $(b.dataset.for), step = parseFloat(inp.step) || 1, v = parseFloat(inp.value) || 0;
+  v = r2(v + step*parseFloat(b.dataset.step));
+  var mn = parseFloat(inp.min), mx = parseFloat(inp.max);
+  if(!isNaN(mn) && v < mn) v = mn;
+  if(!isNaN(mx) && v > mx) v = mx;
+  inp.value = v;
+  inp.dispatchEvent(new Event('input', {bubbles:true}));
+});
+
+/* ── ② 계산하기 ── */
 function renderCalc(){
-  var type = radio('c-type'), comp = radio('c-comp') === '1', taxRate = parseFloat(radio('c-tax'));
+  var type = radio('c-type'), tax = taxRate();
   var amt = Math.max(0, parseFloat($('c-amt').value) || 0) * 10000;
-  var n = parseInt($('c-term').value, 10);
+  var n = Math.min(60, Math.max(1, Math.round(parseFloat($('c-term').value) || 1)));
   var r = Math.max(0, parseFloat($('c-rate').value) || 0);
-  $('c-amt-lab').textContent = type === 'dep' ? '맡길 금액 (한 번)' : '매달 넣을 금액';
-  $('c-term-out').textContent = termText(n);
-  var c = calc(type, amt, n, r, comp, taxRate);
-  $('c-total').textContent = won(c.total);
-  $('c-total').className = 'big ' + type;
-  $('c-yield').textContent = c.principal > 0 ? '넣은 돈보다 ' + won(c.net) + ' 늘었습니다 (원금 대비 ' + (c.net/c.principal*100).toFixed(2) + '%)' : '';
-  $('c-ledger').innerHTML =
-    '<dt>' + (type === 'dep' ? '원금' : '원금 (' + man(amt) + ' × ' + n + '회)') + '</dt><dd>' + won(c.principal) + '</dd>' +
-    '<dt>세전 이자</dt><dd>+ ' + won(c.interest) + '</dd>' +
-    '<dt>세금</dt><dd>− ' + won(c.tax) + '</dd>' +
-    '<dt class="sum">만기 수령액</dt><dd class="sum">' + won(c.total) + '</dd>';
-  var bars = '';
-  for(var i=1;i<=n;i++) bars += '<i style="height:' + (type === 'dep' ? 100 : i/n*100) + '%"></i>';
-  $('c-bars').innerHTML = bars;
-  $('c-bars').className = 'bars ' + (type === 'sav' ? 's' : '');
-  $('c-bars-cap').innerHTML = '<span>1개월째</span><span>통장에 쌓인 원금 (가장 높은 막대 = ' + man(c.principal) + ')</span><span>' + n + '개월째</span>';
-  var other;
+  $('c-amt-lab').textContent = type === 'dep' ? '맡길 돈 (한 번)' : '매달 넣을 돈';
+  $('c-tax-on').checked = TAXON; $('c-tax-off').checked = !TAXON;
+  var c = calc(type, amt, n, r, tax);
+  $('c-eq').innerHTML = eqHTML(c, tax);
+  $('c-steps').innerHTML = stepsHTML(type, amt, n, r, tax);
+  $('c-detail').hidden = type !== 'sav';
   if(type === 'sav'){
-    other = calc('dep', c.principal, n, r, comp, taxRate);
-    $('c-compare').innerHTML = '같은 금리로 ' + man(c.principal) + '을 처음부터 <b class="dep">예금</b>했다면 세전 이자는 <b class="num">' + won(other.interest) + '</b>입니다. 적금 이자 <b class="num">' + won(c.interest) + '</b>은 그 ' + (other.interest ? Math.round(c.interest/other.interest*100) : 0) + '%입니다. 늦게 넣은 돈일수록 이자 붙는 기간이 짧기 때문입니다.';
-  } else {
-    other = calc('sav', amt/n, n, r, comp, taxRate);
-    $('c-compare').innerHTML = '같은 금리로 이 돈을 ' + n + '번에 나눠 <b class="sav">적금</b>으로 넣었다면 세전 이자는 <b class="num">' + won(other.interest) + '</b>입니다. 예금 이자 <b class="num">' + won(c.interest) + '</b>이 더 많은 것은 돈 전체에 처음부터 이자가 붙기 때문입니다.';
+    var u = amt*r/100/12, rows = '';
+    for(var k = 1; k <= n; k++) rows += '<tr><td>' + k + '번째</td><td class="n">' + won(amt) + '</td><td class="n">' + (n-k+1) + '달</td><td class="n">' + wonF(u*(n-k+1)) + '</td></tr>';
+    $('c-table').innerHTML = '<table><thead><tr><th>넣은 순서</th><th>넣은 돈</th><th>이자 붙는 달</th><th>이자</th></tr></thead><tbody>' + rows + '</tbody></table>';
   }
-  $('c-steps').innerHTML = stepsHTML(type, amt, n, r, comp, taxRate);
 }
 $('c-chips').innerHTML = TERMS.map(function(t){ return '<button class="chip" data-t="'+t+'">' + termShort(t) + '</button>'; }).join('');
 $('c-chips').addEventListener('click', function(e){ var b = e.target.closest('button'); if(b){ $('c-term').value = b.dataset.t; renderCalc(); } });
-$('c-rate-r').addEventListener('input', function(){ $('c-rate').value = this.value; renderCalc(); });
-$('c-rate').addEventListener('input', function(){ $('c-rate-r').value = this.value; renderCalc(); });
-['c-amt','c-term'].forEach(function(id){ $(id).addEventListener('input', renderCalc); });
-document.querySelectorAll('#v-calc input[type=radio]').forEach(function(el){
-  el.addEventListener('change', function(){
-    if(el.name === 'c-type'){ $('c-amt').value = el.value === 'dep' ? 500 : 30; }
-    renderCalc();
-  });
+$('c-rate-chips').innerHTML = [2,3,4,5].map(function(t){ return '<button class="chip" data-r="'+t+'">' + t + '%</button>'; }).join('');
+$('c-rate-chips').addEventListener('click', function(e){ var b = e.target.closest('button'); if(b){ $('c-rate').value = b.dataset.r; renderCalc(); } });
+['c-amt','c-term','c-rate'].forEach(function(id){ $(id).addEventListener('input', renderCalc); });
+function amtDefaults(inp, type, dep, sav){ inp.value = type === 'dep' ? dep : sav; inp.step = type === 'dep' ? 100 : 5; }
+document.querySelectorAll('input[name="c-type"]').forEach(function(el){
+  el.addEventListener('change', function(){ amtDefaults($('c-amt'), el.value, 500, 10); renderCalc(); });
+});
+function setTax(on){ TAXON = on; put('rate-class-tax', on ? '1' : '0'); renderCalc(); renderSim(); }
+document.querySelectorAll('input[name="c-tax"],input[name="s-tax"]').forEach(function(el){
+  el.addEventListener('change', function(){ setTax(el.value === '1'); });
 });
 
-/* ── 금리 변동 체험 ── */
+/* ── ③ 가입해 보기 ── */
 var KEY = 'rate-class-sim-v2';
 var SPREAD = {1:-0.4, 3:-0.1, 6:0.1, 12:0.3, 24:0.35, 36:0.4, 60:0.45};
 var EW_MAX = 2;
@@ -589,11 +547,8 @@ function spreadOf(t){
   return SPREAD[60];
 }
 function rateOf(type, term){ return Math.max(0.1, r2(S.base + spreadOf(term) + (type === 'sav' ? 0.6 : 0))); }
-/* 중도해지 금리: 약정 금리 × 50% × 경과 비율, 최저 0.1% */
-function earlyRate(it){
-  var el = S.m - it.start;
-  return Math.max(0.1, r2(it.rate*0.5*el/it.term));
-}
+/* 중도해지 금리: 약정 금리 × 50% × 지난 비율, 최저 0.1% */
+function earlyRate(it){ return Math.max(0.1, r2(it.rate*0.5*(S.m - it.start)/it.term)); }
 function stepRate(){
   if(Math.random() < 0.12) S.trend = [-1,0,1][Math.floor(Math.random()*3)];
   var d = 0, p = Math.random();
@@ -605,11 +560,11 @@ function stepRate(){
   return d;
 }
 function newsFor(d){
-  if(d > 0) return '중앙은행이 기준금리를 0.25%p 올렸습니다. 새로 가입하는 예금·적금 금리도 함께 올랐습니다.';
-  if(d < 0) return '중앙은행이 기준금리를 0.25%p 내렸습니다. 새로 가입하는 예금·적금 금리도 함께 내렸습니다.';
-  if(S.trend > 0) return '물가가 계속 올라 금리를 올려야 한다는 이야기가 나옵니다.';
-  if(S.trend < 0) return '경기가 둔해져 금리를 내릴 것이라는 전망이 늘고 있습니다.';
-  return '기준금리가 당분간 그대로일 것이라는 전망이 많습니다.';
+  if(d > 0) return '📈 금리가 올랐어요. 지금 가입하면 이자를 더 많이 받아요.';
+  if(d < 0) return '📉 금리가 내렸어요. 지금 가입하면 이자를 더 적게 받아요.';
+  if(S.trend > 0) return '금리가 곧 오를 것 같아요.';
+  if(S.trend < 0) return '금리가 곧 내릴 것 같아요.';
+  return '금리가 한동안 그대로일 것 같아요.';
 }
 function fresh(){
   S = {m:-12, base:2.75, trend:0, auto:true, hist:[], cash:10000000, income:500000, items:[], log:[], earned:0, news:'', flash:[], nextId:1};
@@ -618,10 +573,10 @@ function fresh(){
   for(var i=-11;i<=0;i++){ S.m = i; d = stepRate(); S.hist.push({m:i, b:S.base}); }
   S.news = newsFor(d);
 }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+function save(){ put(KEY, JSON.stringify(S)); }
 function load(){
   try{
-    var t = JSON.parse(localStorage.getItem(KEY));
+    var t = JSON.parse(get(KEY, 'null'));
     if(t && Array.isArray(t.hist) && Array.isArray(t.items) && typeof t.cash === 'number'){ S = t; S.flash = []; return; }
   }catch(e){}
   fresh();
@@ -631,7 +586,7 @@ function settle(deps, rate, endM){
   var principal = 0, interest = 0;
   deps.forEach(function(d){ principal += d.amt; interest += d.amt*rate/100*(endM - d.m)/12; });
   interest = Math.floor(interest + 1e-6);
-  var tax = Math.floor(interest*TAX + 1e-6);
+  var tax = Math.floor(interest*taxRate() + 1e-6);
   return {principal:principal, interest:interest, tax:tax, total:principal+interest-tax};
 }
 function expected(it){
@@ -652,15 +607,14 @@ function takeOut(it, amt, apply){
     deps[i].amt -= x; left -= x;
   }
   interest = Math.floor(interest + 1e-6);
-  var tax = Math.floor(interest*TAX + 1e-6);
+  var tax = Math.floor(interest*taxRate() + 1e-6);
   if(apply) it.deps = deps.filter(function(d){ return d.amt > 0; });
   return {principal:amt, interest:interest, tax:tax, total:amt+interest-tax, rate:er};
 }
 function advance(){
   S.m++; S.cash += S.income;
-  var d = 0;
-  if(S.auto){ d = stepRate(); S.news = newsFor(d); }
-  else S.news = '기준금리를 직접 정한 값(' + pct(S.base) + ')으로 유지하고 있습니다.';
+  if(S.auto !== false) S.news = newsFor(stepRate());
+  else S.news = '금리는 정해 둔 ' + pct(S.base) + ' 그대로예요.';
   S.hist.push({m:S.m, b:S.base});
   var keep = [];
   S.items.forEach(function(it){
@@ -679,6 +633,10 @@ function advance(){
   });
   S.items = keep;
 }
+function moneyLine(e){
+  return '넣은 돈 <span class="num">' + won(e.principal) + '</span> + 이자 <span class="num">' + won(e.interest) + '</span>' +
+    (e.tax ? ' − 세금 <span class="num">' + won(e.tax) + '</span>' : '') + ' = <b class="num">' + won(e.total) + '</b>';
+}
 function renderRates(){
   $('s-rates').innerHTML = TERMS.map(function(t){
     function cell(type){
@@ -689,22 +647,24 @@ function renderRates(){
   }).join('');
 }
 function renderHold(){
-  if(S.items.length === 0){ $('s-hold').innerHTML = '<p class="empty">아직 가입한 상품이 없습니다. 위에서 상품과 기간을 정해 가입해 보세요.</p>'; return; }
+  if(S.items.length === 0){ $('s-hold').innerHTML = '<p class="empty">아직 가입한 것이 없어요. 위에서 가입해 보세요.</p>'; return; }
   $('s-hold').innerHTML = S.items.map(function(it){
     var ex = expected(it), el = S.m - it.start, paid = paidOf(it), s = it.type === 'sav';
     var er = earlyRate(it), now = settle(it.deps, er, S.m), left = EW_MAX - (it.ew||0);
-    var h = '<div class="item"><div class="hd"><span><span class="badge ' + (s?'s':'') + '">' + (s?'적금':'예금') + '</span> <b>' + termText(it.term) + '</b> · 연 <b class="num">' + pct(it.rate) + '</b> 고정</span>' +
-      '<span class="row"><button class="small" data-ew="' + it.id + '"' + (left <= 0 || paid <= 10000 ? ' disabled' : '') + '>긴급출금 (' + left + '회 남음)</button>' +
-      '<button class="small" data-close="' + it.id + '">중도해지</button></span></div>' +
+    var h = '<div class="item"><div><span class="badge ' + (s?'s':'') + '">' + (s?'🪙 적금':'💰 예금') + '</span> <b>' + termText(it.term) + '</b> · 금리 <b class="num">' + pct(it.rate) + '</b></div>' +
       '<div class="prog ' + (s?'s':'') + '"><i style="width:' + (el/it.term*100) + '%"></i></div>' +
-      '<div class="kv"><span>' + ymShort(it.start) + ' 가입 → ' + ymShort(it.start+it.term) + ' 만기 (' + (it.term-el) + '개월 남음)</span>' +
-      '<span>' + (s ? '매달 ' + man(it.amt) + ', ' : '') + '넣은 돈 <b>' + won(paid) + '</b></span>' +
-      '<span>만기 예상 <b>' + won(ex.total) + '</b></span>' +
-      (it.missed ? '<span class="stamp">현금 부족으로 ' + it.missed + '회 못 넣음</span>' : '') + '</div>' +
-      '<div class="ifclose">지금 해지하면 연 <b class="num">' + pct(it.rate) + '</b> 대신 중도해지 금리 연 <b class="num stamp">' + pct(er) + '</b> 적용: 원금 <span class="num">' + won(now.principal) + '</span> + 이자 <span class="num">' + won(now.interest) + '</span> − 세금 <span class="num">' + won(now.tax) + '</span> = <b class="num">' + won(now.total) + '</b></div>';
+      '<div>만기까지 <b>' + (it.term-el) + '개월</b> 남았어요. (' + ym(it.start+it.term) + ')</div>' +
+      '<div>' + (s ? '매달 ' + won(it.amt) + '씩, ' : '') + '지금까지 넣은 돈 <b class="num">' + won(paid) + '</b></div>' +
+      '<div>만기에 받을 돈 <b class="num">' + won(ex.total) + '</b></div>' +
+      (it.missed ? '<div class="stamp">돈이 모자라서 ' + it.missed + '번 못 넣었어요.</div>' : '') +
+      '<div class="ifclose">지금 깨면 금리가 <b class="num">' + pct(it.rate) + '</b>에서 <b class="num stamp">' + pct(er) + '</b>로 줄어요.<br>' + moneyLine(now) + '</div>' +
+      '<div class="row"><button data-ew="' + it.id + '"' + (left <= 0 || paid <= 10000 ? ' disabled' : '') + '>조금 꺼내기 (' + left + '번 남음)</button>' +
+      '<button data-close="' + it.id + '">깨기</button></div>';
     if(ewOpen === it.id){
-      h += '<div class="ewform"><div class="row"><label class="inp" for="ew-amt"><span class="unit">꺼낼 금액</span><input type="number" id="ew-amt" min="1" step="1" value="' + Math.max(1, Math.floor(paid/20000)) + '" inputmode="numeric"><span class="unit">만 원</span></label>' +
-        '<button class="primary small" data-ewgo="' + it.id + '">출금</button><button class="small" data-ewcancel="1">취소</button></div><p class="cap" id="ew-prev"></p></div>';
+      h += '<div class="ewform"><div class="stepper"><span class="unit" id="ew-lab">꺼낼 돈</span><button data-for="ew-amt" data-step="-1" aria-label="돈 줄이기">−</button>' +
+        '<input type="number" id="ew-amt" min="1" step="' + (paid >= 2000000 ? 50 : 5) + '" value="' + Math.max(1, Math.floor(paid/20000)) + '" inputmode="numeric" aria-labelledby="ew-lab"><span class="unit">만 원</span>' +
+        '<button data-for="ew-amt" data-step="1" aria-label="돈 늘리기">+</button></div><p id="ew-prev"></p>' +
+        '<div class="row"><button class="primary" data-ewgo="' + it.id + '">꺼내기</button><button data-ewcancel="1">안 할래요</button></div></div>';
     }
     return h + '</div>';
   }).join('');
@@ -713,27 +673,27 @@ function renderHold(){
 function ewPrev(){
   var it = findItem(ewOpen), inp = $('ew-amt'); if(!it || !inp) return;
   var amt = Math.max(0, parseFloat(inp.value) || 0)*10000, paid = paidOf(it), p = $('ew-prev'), b = document.querySelector('[data-ewgo]');
-  if(amt <= 0 || amt >= paid){ p.className = 'err'; p.textContent = '1만 원 이상, 넣은 돈(' + won(paid) + ')보다 적게 입력하세요. 전부 꺼내려면 중도해지를 하세요.'; b.disabled = true; return; }
+  if(amt <= 0 || amt >= paid){ p.className = 'err'; p.textContent = '넣은 돈(' + won(paid) + ')보다 적게 꺼낼 수 있어요. 모두 꺼내려면 "깨기"를 눌러요.'; b.disabled = true; return; }
   var r = takeOut(it, amt, false);
-  p.className = 'cap'; b.disabled = false;
-  p.innerHTML = '꺼내는 돈에는 중도해지 금리 연 ' + pct(r.rate) + '가 적용됩니다: ' + won(r.principal) + ' + 이자 ' + won(r.interest) + ' − 세금 ' + won(r.tax) + ' = <b>' + won(r.total) + '</b>. 남는 ' + won(paid-amt) + '은 약정 금리 연 ' + pct(it.rate) + '를 그대로 받습니다.';
+  p.className = ''; b.disabled = false;
+  p.innerHTML = '꺼내는 돈은 금리 ' + pct(r.rate) + '만 받아요. ' + moneyLine(r) + '<br>남는 돈 ' + won(paid-amt) + '은 금리 ' + pct(it.rate) + ' 그대로예요.';
 }
 function renderSim(){
-  var inv = paidIn();
   $('s-tiles').innerHTML =
-    '<div class="tile"><span>지금</span><b>' + ym(S.m) + '</b></div>' +
+    '<div class="tile"><span>오늘</span><b>' + ym(S.m) + '</b></div>' +
     '<div class="tile"><span>기준금리</span><b>' + pct(S.base) + '</b></div>' +
-    '<div class="tile"><span>쓸 수 있는 현금</span><b>' + won(S.cash) + '</b></div>' +
-    '<div class="tile"><span>예금·적금에 넣은 돈</span><b>' + won(inv) + '</b></div>' +
-    '<div class="tile"><span>지금까지 받은 세후 이자</span><b class="sav">' + won(S.earned) + '</b></div>';
+    '<div class="tile"><span>내 지갑</span><b>' + won(S.cash) + '</b></div>' +
+    '<div class="tile"><span>은행에 넣은 돈</span><b>' + won(paidIn()) + '</b></div>' +
+    '<div class="tile"><span>지금까지 받은 이자</span><b class="sav">' + won(S.earned) + '</b></div>';
   $('s-news').textContent = S.news;
   $('s-auto-on').checked = S.auto !== false; $('s-auto-off').checked = S.auto === false;
+  $('s-tax-on').checked = TAXON; $('s-tax-off').checked = !TAXON;
   drawChart();
   renderRates();
   renderJoin();
   renderHold();
-  if(S.log.length === 0) $('s-log').innerHTML = '<p class="empty">만기, 중도해지, 긴급출금으로 돈을 받으면 원금, 이자, 세금, 받은 금액이 여기에 기록됩니다.</p>';
-  else $('s-log').innerHTML = '<table><thead><tr><th>받은 달</th><th>구분</th><th>적용 금리</th><th>원금</th><th>세전 이자</th><th>세금</th><th>받은 금액</th></tr></thead><tbody>' +
+  if(S.log.length === 0) $('s-log').innerHTML = '<p class="empty">돈을 받으면 여기에 적혀요.</p>';
+  else $('s-log').innerHTML = '<table><thead><tr><th>받은 달</th><th>무엇</th><th>금리</th><th>넣은 돈</th><th>이자</th><th>세금</th><th>받은 돈</th></tr></thead><tbody>' +
     S.log.map(function(e){
       return '<tr><td>' + ymShort(e.m) + ' <span class="badge ' + (e.kind==='만기' ? (e.type==='sav'?'s':'') : 'r') + '">' + e.kind + '</span></td><td style="text-align:left">' + (e.type==='sav'?'적금 ':'예금 ') + termShort(e.term) + '</td><td class="n">' + pct(e.rate) + '</td><td class="n">' + won(e.principal) + '</td><td class="n">' + won(e.interest) + '</td><td class="n">' + won(e.tax) + '</td><td class="n"><b>' + won(e.total) + '</b></td></tr>';
     }).join('') + '</tbody></table>';
@@ -741,7 +701,7 @@ function renderSim(){
   if(S.flash.length){
     f.hidden = false; f.className = 'flash';
     f.innerHTML = S.flash.map(function(e){
-      return '<div><b class="stamp">' + e.kind + '</b> ' + (e.type==='sav'?'적금 ':'예금 ') + termText(e.term) + ' (적용 금리 연 ' + pct(e.rate) + '): 원금 <span class="num">' + won(e.principal) + '</span> + 이자 <span class="num">' + won(e.interest) + '</span> − 세금 <span class="num">' + won(e.tax) + '</span> = <b class="num">' + won(e.total) + '</b>을 받았습니다.</div>';
+      return '<div>' + (e.kind === '만기' ? '🎉 ' : '') + '<b class="stamp">' + e.kind + '</b> ' + (e.type==='sav'?'적금 ':'예금 ') + termShort(e.term) + ' (금리 ' + pct(e.rate) + ')<br>' + moneyLine(e) + '을 받았어요.</div>';
     }).join('');
   } else f.hidden = true;
   save();
@@ -750,15 +710,13 @@ function renderJoin(){
   var s = pick.type === 'sav', r = rateOf(pick.type, pick.term);
   $('s-type-dep').checked = !s; $('s-type-sav').checked = s;
   if(document.activeElement !== $('s-term')) $('s-term').value = pick.term;
-  $('s-term-r').value = pick.term;
-  $('s-pick').innerHTML = '<span class="badge ' + (s?'s':'') + '">' + (s?'적금':'예금') + '</span> <b>' + termText(pick.term) + '</b> · 연 <b class="num">' + pct(r) + '</b> · 만기 ' + ym(S.m + pick.term);
-  $('s-amt-lab').textContent = s ? '매달 넣을 금액 (첫 회차는 오늘 납입)' : '맡길 금액';
+  $('s-pick').innerHTML = '<span class="badge ' + (s?'s':'') + '">' + (s?'🪙 적금':'💰 예금') + '</span> <b>' + termText(pick.term) + '</b> · 금리 <b class="num">' + pct(r) + '</b><br>만기는 ' + ym(S.m + pick.term) + '이에요.';
+  $('s-amt-lab').textContent = s ? '매달 넣을 돈' : '맡길 돈';
   var amt = Math.max(0, parseFloat($('s-amt').value) || 0) * 10000;
-  var c = calc(pick.type, amt, pick.term, r, false, TAX);
-  $('s-preview').innerHTML = '<dt>원금' + (s ? ' (' + pick.term + '회)' : '') + '</dt><dd>' + won(c.principal) + '</dd><dt>세전 이자</dt><dd>+ ' + won(c.interest) + '</dd><dt>세금 15.4%</dt><dd>− ' + won(c.tax) + '</dd><dt class="sum">만기 예상 수령액</dt><dd class="sum">' + won(c.total) + '</dd>';
+  $('s-preview').innerHTML = eqHTML(calc(pick.type, amt, pick.term, r, taxRate()), taxRate());
   var err = '';
-  if(amt <= 0) err = '금액을 1만 원 이상 입력하세요.';
-  else if(amt > S.cash) err = '현금이 부족합니다. 지금 쓸 수 있는 돈은 ' + won(S.cash) + '입니다.';
+  if(amt <= 0) err = '돈을 1만 원보다 많이 넣어요.';
+  else if(amt > S.cash) err = '지갑에 돈이 모자라요. 지갑에는 ' + won(S.cash) + '이 있어요.';
   $('s-err').hidden = !err; $('s-err').textContent = err;
   $('s-do').disabled = !!err;
 }
@@ -771,14 +729,14 @@ function drawChart(){
   if(hi - lo < 2) hi = lo + 2;
   if(window.Chart){
     $('s-svg-box').hidden = true; $('s-canvas-box').hidden = false;
-    var ink = cssVar('--ink'), muted = cssVar('--muted'), line = cssVar('--line'), stamp = cssVar('--stamp');
-    var data = {labels:h.map(function(p){ return ymShort(p.m); }), datasets:[{data:h.map(function(p){ return p.b; }), stepped:true, borderColor:ink, borderWidth:2, fill:false,
-      pointRadius:h.map(function(p,i){ return i === h.length-1 ? 5 : 0; }), pointHoverRadius:5, pointBackgroundColor:stamp, pointBorderColor:stamp}]};
+    var ink = cssVar('--ink'), muted = cssVar('--muted'), line = cssVar('--line'), stamp = cssVar('--stamp'), fs = Math.round(13*SCALE);
+    var data = {labels:h.map(function(p){ return ymShort(p.m); }), datasets:[{data:h.map(function(p){ return p.b; }), stepped:true, borderColor:ink, borderWidth:3, fill:false,
+      pointRadius:h.map(function(p,i){ return i === h.length-1 ? 6 : 0; }), pointHoverRadius:6, pointBackgroundColor:stamp, pointBorderColor:stamp}]};
     var opts = {responsive:true, maintainAspectRatio:false, animation:false,
       plugins:{legend:{display:false}, tooltip:{callbacks:{label:function(c){ return '기준금리 ' + pct(c.parsed.y); }}}},
       interaction:{mode:'index', intersect:false},
-      scales:{x:{ticks:{color:muted, maxTicksLimit:7, maxRotation:0}, grid:{display:false}, border:{color:line}},
-              y:{min:lo, max:hi, ticks:{color:muted, stepSize:0.5, callback:function(v){ return v + '%'; }}, grid:{color:line}, border:{color:line}}}};
+      scales:{x:{ticks:{color:muted, maxTicksLimit:6, maxRotation:0, font:{size:fs}}, grid:{display:false}, border:{color:line}},
+              y:{min:lo, max:hi, ticks:{color:muted, stepSize:1, font:{size:fs}, callback:function(v){ return v + '%'; }}, grid:{color:line}, border:{color:line}}}};
     if(!chart) chart = new Chart($('s-canvas'), {type:'line', data:data, options:opts});
     else { chart.data = data; chart.options = opts; chart.update('none'); }
     return;
@@ -804,15 +762,14 @@ function setTerm(v){
 $('s-rates').addEventListener('click', function(e){
   var b = e.target.closest('button'); if(!b) return;
   var ty = b.dataset.type;
-  if(pick.type !== ty) $('s-amt').value = ty === 'dep' ? 300 : 30;
+  if(pick.type !== ty) amtDefaults($('s-amt'), ty, 300, 10);
   pick = {type:ty, term:+b.dataset.term}; $('s-term').value = pick.term; renderRates(); renderJoin();
 });
 document.querySelectorAll('input[name="s-type"]').forEach(function(el){
-  el.addEventListener('change', function(){ pick.type = el.value; $('s-amt').value = el.value === 'dep' ? 300 : 30; renderRates(); renderJoin(); });
+  el.addEventListener('change', function(){ pick.type = el.value; amtDefaults($('s-amt'), el.value, 300, 10); renderRates(); renderJoin(); });
 });
 $('s-term').addEventListener('input', function(){ setTerm(this.value); });
 $('s-term').addEventListener('change', function(){ this.value = pick.term; });
-$('s-term-r').addEventListener('input', function(){ $('s-term').value = this.value; setTerm(this.value); });
 $('s-amt').addEventListener('input', renderJoin);
 $('s-do').addEventListener('click', function(){
   var amt = Math.max(0, parseFloat($('s-amt').value) || 0) * 10000;
@@ -823,9 +780,9 @@ $('s-do').addEventListener('click', function(){
 });
 $('s-hold').addEventListener('input', function(e){ if(e.target.id === 'ew-amt') ewPrev(); });
 $('s-hold').addEventListener('click', function(e){
-  var b = e.target.closest('button'); if(!b) return;
+  var b = e.target.closest('button'); if(!b || b.dataset.for) return;
   var it, r, en;
-  if(b.dataset.ew){ ewOpen = +b.dataset.ew; renderHold(); var i = $('ew-amt'); if(i) i.focus(); return; }
+  if(b.dataset.ew){ ewOpen = +b.dataset.ew; renderHold(); return; }
   if(b.dataset.ewcancel){ ewOpen = null; renderHold(); return; }
   if(b.dataset.ewgo){
     it = findItem(+b.dataset.ewgo); if(!it) return;
@@ -838,7 +795,7 @@ $('s-hold').addEventListener('click', function(e){
   }
   if(b.dataset.close){
     var id = +b.dataset.close;
-    if(b.dataset.armed !== '1'){ b.dataset.armed = '1'; b.textContent = '한 번 더 누르면 해지됩니다'; return; }
+    if(b.dataset.armed !== '1'){ b.dataset.armed = '1'; b.textContent = '정말 깰까요? 한 번 더 누르면 깨져요'; return; }
     it = findItem(id); if(!it) return;
     var er = earlyRate(it); r = settle(it.deps, er, S.m);
     S.cash += r.total; S.earned += r.interest - r.tax;
@@ -852,7 +809,7 @@ function nudge(d){
   var nb = Math.min(8, Math.max(0.25, r2(S.base + d)));
   if(nb === S.base) return;
   S.base = nb; S.hist[S.hist.length-1].b = nb;
-  S.news = '기준금리를 직접 ' + pct(nb) + '로 바꿨습니다. 새로 가입하는 상품의 금리표가 달라졌습니다. 이미 가입한 상품의 금리는 그대로입니다.';
+  S.news = '기준금리를 ' + pct(nb) + '로 바꿨어요. 새로 가입할 때의 금리가 달라졌어요. 이미 가입한 것은 그대로예요.';
   S.flash = []; renderSim();
 }
 $('s-up').addEventListener('click', function(){ nudge(0.25); });
@@ -865,109 +822,112 @@ function disarm(){ resetArmed = false; $('s-reset').textContent = '처음부터 
 $('s-next').addEventListener('click', function(){ go(1); });
 $('s-next6').addEventListener('click', function(){ go(6); });
 $('s-reset').addEventListener('click', function(){
-  if(!resetArmed){ resetArmed = true; this.textContent = '한 번 더 누르면 초기화됩니다'; return; }
+  if(!resetArmed){ resetArmed = true; this.textContent = '한 번 더 누르면 처음으로 돌아가요'; return; }
   fresh(); pick = {type:'dep', term:12}; ewOpen = null; disarm(); renderSim();
 });
 
-/* ── 문제 ── */
-var Q = null, qDone = 0, qRight = 0, qAnswered = false;
+/* ── ④ 문제 풀기 (골라서 답하기) ── */
+var CONCEPT = [
+  {q:'매달 10만 원씩 모으고 싶어요. 무엇에 가입할까요?', a:'🪙 적금', o:['💰 예금','🪙 적금'], why:'매달 조금씩 넣는 것은 적금이에요.'},
+  {q:'모아 둔 500만 원을 한 번에 맡기고 싶어요. 무엇에 가입할까요?', a:'💰 예금', o:['💰 예금','🪙 적금'], why:'큰돈을 한 번에 맡기는 것은 예금이에요.'},
+  {q:'은행에 돈을 맡기면 은행이 더 주는 돈은 무엇일까요?', a:'이자', o:['이자','세금','용돈'], why:'은행이 더 주는 돈을 이자라고 해요.'},
+  {q:'약속한 기간이 끝나서 돈을 받는 날은 무엇일까요?', a:'만기', o:['만기','가입','해지'], why:'약속한 기간이 끝나는 날이 만기예요.'},
+  {q:'어느 쪽이 이자를 더 많이 줄까요?', a:'연 5%', o:['연 3%','연 5%'], why:'금리 숫자가 클수록 이자를 많이 줘요.'},
+  {q:'예금에 가입한 뒤에 은행 금리가 내렸어요. 내 예금의 금리는 어떻게 될까요?', a:'그대로예요', o:['그대로예요','같이 내려가요'], why:'가입할 때 정한 금리는 만기까지 그대로예요.'},
+  {q:'만기 전에 예금을 깨면 이자는 어떻게 될까요?', a:'줄어들어요', o:['줄어들어요','늘어나요','그대로예요'], why:'만기 전에 깨면 이자를 조금만 받아요.'},
+  {q:'지금 금리가 아주 높아요. 기간을 어떻게 정하면 좋을까요?', a:'길게', o:['길게','짧게'], why:'높은 금리를 오래 받을 수 있어요.'},
+  {q:'급할 때 돈을 조금만 꺼내는 것(긴급출금)은 몇 번 할 수 있을까요?', a:'2번', o:['2번','10번','마음대로'], why:'긴급출금은 2번까지 할 수 있어요.'}
+];
+var Q = null, qDone = 0, qRight = 0, lastC = -1;
 function rnd(a){ return a[Math.floor(Math.random()*a.length)]; }
-function makeQ(){
-  var type = rnd(['dep','sav']);
-  var q = {type:type, term:rnd(TERMS), rate:rnd([2.4,3,3.6,4.2,4.8,6]),
-       amt:(type === 'dep' ? rnd([100,200,300,500,1000]) : rnd([10,20,30,50]))*10000, ask:rnd(['pre','total'])};
-  var c = calc(q.type, q.amt, q.term, q.rate, false, TAX);
-  q.calc = c; q.answer = q.ask === 'pre' ? c.interest : c.total;
-  var what = q.ask === 'pre' ? '만기에 붙는 <b>세전 이자</b>' : '세금을 떼고 만기에 받는 <b>전체 금액</b>';
-  q.html = type === 'dep'
-    ? '연 <b class="num">' + q.rate + '%</b>인 <b class="dep">정기예금</b>에 <b class="num">' + man(q.amt) + '</b>을 <b>' + termText(q.term) + '</b> 동안 맡겼습니다. ' + what + '은 얼마일까요?'
-    : '연 <b class="num">' + q.rate + '%</b>인 <b class="sav">정기적금</b>에 매달 <b class="num">' + man(q.amt) + '</b>씩 <b>' + termText(q.term) + '</b> 동안 넣었습니다. ' + what + '은 얼마일까요?';
-  return q;
+function shuffle(a){ a = a.slice(); for(var i = a.length-1; i > 0; i--){ var j = Math.floor(Math.random()*(i+1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function uniq(ans, cands){
+  var out = [ans];
+  cands.forEach(function(c){ if(out.length < 3 && c > 0 && out.indexOf(c) < 0) out.push(c); });
+  return shuffle(out).map(won);
 }
+function makeQ(){
+  var kind = rnd(['c','c','i','p','t']), q, amt, r, n, c;
+  if(kind === 'c'){
+    var i; do { i = Math.floor(Math.random()*CONCEPT.length); } while(i === lastC);
+    lastC = i; q = CONCEPT[i];
+    return {q:q.q, a:q.a, o:shuffle(q.o), why:'<p>' + q.why + '</p>'};
+  }
+  if(kind === 'p'){ // 적금에 넣은 돈 모두
+    amt = rnd([5,10,20])*10000; n = rnd([6,12,24]);
+    return {q:'적금에 매달 ' + won(amt) + '씩 ' + n + '개월 동안 넣었어요. 넣은 돈은 모두 얼마일까요?', a:won(amt*n),
+      o:uniq(amt*n, [amt*(n+2), amt*n/2, amt*(n-1)]),
+      why:'<p>매달 넣는 돈에 횟수를 곱해요.</p><div class="formula">' + won(amt) + ' × ' + n + '번 = ' + won(amt*n) + '</div>'};
+  }
+  amt = rnd([100,200,300,500])*10000; r = rnd([2,3,4,5]); n = rnd([12,12,6,24]);
+  c = calc('dep', amt, n, r, 0);
+  var why = '<ol class="steps">' + stepsHTML('dep', amt, n, r, 0) + '</ol>';
+  if(kind === 'i') return {q:'예금에 ' + won(amt) + '을 넣었어요. 금리는 연 ' + r + '%, 기간은 ' + termShort(n) + '이에요. 이자는 얼마일까요? (세금은 빼고 생각해요)', a:won(c.interest),
+    o:uniq(c.interest, [c.interest*2, c.interest/2, c.interest + amt/100]), why:why};
+  return {q:'예금에 ' + won(amt) + '을 넣었어요. 금리는 연 ' + r + '%, 기간은 ' + termShort(n) + '이에요. 만기에 받는 돈은 모두 얼마일까요? (세금은 빼고 생각해요)', a:won(c.total),
+    o:uniq(c.total, [amt + c.interest*2, amt, amt + c.interest/2]), why:why};
+}
+function score(){ $('q-score').textContent = '⭐ ' + qRight + '개 / ' + qDone + '문제'; }
 function newQ(){
-  Q = makeQ();
-  $('q-text').innerHTML = Q.html;
-  $('q-ans').value = ''; $('q-result').hidden = true; $('q-steps').hidden = true; qAnswered = false;
+  Q = makeQ(); Q.done = false;
+  $('q-text').textContent = Q.q;
+  $('q-opts').innerHTML = Q.o.map(function(o, i){ return '<button data-i="' + i + '">' + o + '</button>'; }).join('');
+  $('q-result').hidden = true;
   score();
 }
-function score(){ $('q-score').textContent = '맞힌 문제 ' + qRight + ' / ' + qDone; }
-function check(){
-  var raw = $('q-ans').value.replace(/[^0-9]/g, '');
-  var r = $('q-result'); r.hidden = false;
-  if(raw === ''){ r.innerHTML = '<span class="no">답을 숫자로 입력하세요.</span>'; return; }
-  var ok = Math.abs(parseInt(raw, 10) - Q.answer) <= 1;
-  if(!qAnswered){ qAnswered = true; qDone++; if(ok) qRight++; score(); }
-  r.innerHTML = ok ? '<span class="ok">정답입니다.</span> ' + won(Q.answer)
-                   : '<span class="no">다시 확인해 보세요.</span> 정답은 <b class="num">' + won(Q.answer) + '</b>입니다.';
-  $('q-steps').innerHTML = stepsHTML(Q.type, Q.amt, Q.term, Q.rate, false, TAX);
-  $('q-steps').hidden = false;
-}
-$('q-check').addEventListener('click', check);
-$('q-ans').addEventListener('keydown', function(e){ if(e.key === 'Enter') check(); });
+$('q-opts').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b || Q.done) return;
+  Q.done = true; qDone++;
+  var ok = Q.o[+b.dataset.i] === Q.a; if(ok) qRight++;
+  this.querySelectorAll('button').forEach(function(x){
+    if(Q.o[+x.dataset.i] === Q.a) x.className = 'right'; else if(x === b) x.className = 'wrong';
+    x.disabled = true;
+  });
+  $('q-result').hidden = false;
+  $('q-result').innerHTML = (ok ? '<span class="ok">⭕ 맞았어요!</span>' : '<span class="no">❌ 아쉬워요. 답은 "' + Q.a + '"이에요.</span>') + Q.why;
+  score();
+});
 $('q-next').addEventListener('click', newQ);
 
-/* ── 학습지 ── */
-var WKEY = 'rate-class-sheet-size', WQ = [];
-function sheetQs(){
-  // 예금·적금, 세전·세후가 고루 나오도록 6문제
-  var out = [], guard = 0;
-  var want = [['dep','pre'],['sav','pre'],['dep','total'],['sav','total'],['dep','total'],['sav','total']];
-  want.forEach(function(w){
-    var q; do { q = makeQ(); guard++; } while((q.type !== w[0] || q.ask !== w[1]) && guard < 2000);
-    out.push(q);
+/* ── 글자 크기 ── */
+function setScale(v){
+  SCALE = Math.min(2, Math.max(0.8, Math.round(v*10)/10));
+  document.documentElement.style.fontSize = Math.round(SCALE*100) + '%';
+  $('z-out').textContent = Math.round(SCALE*100) + '%';
+  $('z-minus').disabled = SCALE <= 0.8; $('z-plus').disabled = SCALE >= 2;
+  put('rate-class-scale', String(SCALE));
+  if(S) drawChart();
+}
+$('z-minus').addEventListener('click', function(){ setScale(SCALE - 0.1); });
+$('z-plus').addEventListener('click', function(){ setScale(SCALE + 0.1); });
+$('z-reset').addEventListener('click', function(){ setScale(1); });
+
+/* ── 읽어 주기 ── */
+var synth = window.speechSynthesis, CUR = 'basics';
+function stopRead(){ try{ synth.cancel(); }catch(e){} $('tts-stop').hidden = true; $('tts').hidden = false; }
+if(!synth || !window.SpeechSynthesisUtterance){ $('tts').hidden = true; }
+else {
+  $('tts').addEventListener('click', function(){
+    var parts = [];
+    $('v-' + CUR).querySelectorAll('[data-read]').forEach(function(el){ var t = (el.innerText || el.textContent || '').trim(); if(t) parts.push(t); });
+    if(!parts.length) return;
+    synth.cancel();
+    var u = new SpeechSynthesisUtterance(parts.join('. ').replace(/[💰🪙⏳🎉📈📉⭕❌]/g, ''));
+    u.lang = 'ko-KR'; u.rate = 0.85;
+    u.onend = u.onerror = function(){ $('tts-stop').hidden = true; $('tts').hidden = false; };
+    $('tts').hidden = true; $('tts-stop').hidden = false;
+    synth.speak(u);
   });
-  return out;
+  $('tts-stop').addEventListener('click', stopRead);
 }
-function renderSheet(){
-  var withAns = radio('w-ans') === '1', i, rows = '';
-  for(i = 0; i < 5; i++) rows += '<tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
-  var h = '<div class="who"><h2>예금·적금 학습지</h2><span>(&nbsp;&nbsp;&nbsp;)학년 (&nbsp;&nbsp;&nbsp;)반 (&nbsp;&nbsp;&nbsp;)번 &nbsp;이름 <span class="blank">&nbsp;</span></span></div>';
-  h += '<section><h3>1. 예금과 적금 비교하기</h3><div class="scroll"><table><thead><tr><th style="width:24%">구분</th><th>정기예금</th><th>정기적금</th></tr></thead><tbody>' +
-    '<tr><th>돈을 넣는 방법</th><td></td><td></td></tr><tr><th>이자가 붙는 방식</th><td></td><td></td></tr><tr><th>어울리는 상황</th><td></td><td></td></tr></tbody></table></div>' +
-    '<ol><li>가입한 날의 금리가 만기까지 유지되는 것을 <span class="blank">&nbsp;</span> 금리라고 한다.</li>' +
-    '<li>이자에서 떼는 이자소득세는 이자의 <span class="blank">&nbsp;</span> %이다.</li>' +
-    '<li>앞으로 금리가 내려갈 것 같으면 만기를 ( 길게 / 짧게 ) 정하는 것이 유리하다.</li>' +
-    '<li>만기 전에 해지하면 약속한 금리보다 ( 높은 / 낮은 ) 금리가 적용된다.</li></ol></section>';
-  h += '<section><h3>2. 만기에 받는 돈 계산하기</h3><p>단리로 계산하고 원 미만은 버립니다. 세금은 이자의 15.4%입니다.</p><ol>' +
-    WQ.map(function(q){ return '<li>' + q.html + '<div class="work"><span>답: <span class="blank">&nbsp;</span> 원</span></div></li>'; }).join('') + '</ol></section>';
-  h += '<section><h3>3. 금리 변동 가입 체험 기록</h3><div class="scroll"><table><thead><tr><th>가입한 달</th><th>상품</th><th>기간</th><th>금리</th><th>넣은 금액</th><th>받은 금액</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
-    '<p>금리가 바뀔 때 가입 기간을 어떤 기준으로 정했나요?</p><div class="line"></div><div class="line"></div>' +
-    '<p>중도해지나 긴급출금을 했을 때 이자는 어떻게 달라졌나요?</p><div class="line"></div><div class="line"></div></section>';
-  if(withAns){
-    h += '<section class="answers"><h3>정답</h3><p>1번: (예금) 한 번에 맡김, 전체 금액에 처음부터 이자, 목돈을 불릴 때 / (적금) 매달 일정액 납입, 넣은 달부터 만기까지만 이자, 목돈을 모을 때. ① 고정 ② 15.4 ③ 길게 ④ 낮은</p><ol>' +
-      WQ.map(function(q){
-        var c = q.calc, f = q.type === 'dep'
-          ? won(q.amt) + ' × ' + q.rate + '% × ' + q.term + ' ÷ 12'
-          : won(q.amt) + ' × ' + q.rate + '% ÷ 12 × ' + (q.term*(q.term+1)/2);
-        return '<li><b class="num">' + won(q.answer) + '</b><br><span class="num">세전 이자 = ' + f + ' = ' + won(c.interest) +
-          (q.ask === 'total' ? ', 세금 ' + won(c.tax) + ', 받는 돈 = ' + won(c.principal) + ' + ' + won(c.interest) + ' − ' + won(c.tax) : '') + '</span></li>';
-      }).join('') + '</ol></section>';
-  }
-  $('sheet').innerHTML = h;
-}
-function setSize(v){
-  v = Math.min(28, Math.max(12, parseInt(v, 10) || 16));
-  $('w-size').value = v; $('w-size-out').textContent = v + 'px';
-  $('sheet').style.setProperty('--ws', v + 'px');
-  try{ localStorage.setItem(WKEY, String(v)); }catch(e){}
-}
-$('w-size').addEventListener('input', function(){ setSize(this.value); });
-$('w-minus').addEventListener('click', function(){ setSize(+$('w-size').value - 1); });
-$('w-plus').addEventListener('click', function(){ setSize(+$('w-size').value + 1); });
-$('w-new').addEventListener('click', function(){ WQ = sheetQs(); renderSheet(); });
-document.querySelectorAll('input[name="w-ans"]').forEach(function(el){ el.addEventListener('change', renderSheet); });
-$('w-print').addEventListener('click', function(){ window.print(); });
-(function(){
-  var framed = false;
-  try{ framed = window.self !== window.top; }catch(e){ framed = true; }
-  if(framed){ $('w-print').hidden = true; $('w-print-note').hidden = false; }
-})();
 
 /* ── 탭 ── */
-var VIEWS = ['basics','calc','sim','quiz','sheet'];
+var VIEWS = ['basics','calc','sim','quiz'];
 function route(){
   var h = (location.hash || '').replace('#','');
   if(VIEWS.indexOf(h) < 0) h = 'basics';
+  if(h !== CUR && synth) stopRead();
+  CUR = h;
   VIEWS.forEach(function(v){ $('v-'+v).hidden = v !== h; });
   document.querySelectorAll('nav.tabs a').forEach(function(a){
     if(a.getAttribute('href') === '#'+h) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
@@ -976,9 +936,9 @@ function route(){
 }
 window.addEventListener('hashchange', route);
 
+TAXON = get('rate-class-tax', '0') === '1';
 load(); renderCalc(); renderSim(); newQ();
-WQ = sheetQs(); renderSheet();
-(function(){ var v = 16; try{ v = localStorage.getItem(WKEY) || 16; }catch(e){} setSize(v); })();
+setScale(parseFloat(get('rate-class-scale', '1')) || 1);
 route();
 })();
 </script>
