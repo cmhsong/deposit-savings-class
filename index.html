@@ -102,6 +102,7 @@ fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:.4re
 input[type=number]{font:inherit;font-family:var(--mono);font-weight:600;font-size:1.15rem;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:.5rem .6rem;width:6.5em;min-width:0;text-align:right}
 .unit{white-space:normal}
 input[type=text]{font:inherit;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:.5rem .7rem;width:100%;min-width:0}
+input[type=date]{font:inherit;font-family:var(--mono);font-weight:600;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:.5rem .7rem;width:fit-content;max-width:100%;min-height:2.75rem}
 #k-list button{min-height:2.2rem;padding:.2rem .7rem;margin-left:.4rem}
 .chips{display:flex;flex-wrap:wrap;gap:.4rem}
 button{font:inherit;cursor:pointer;color:var(--ink);background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:.5rem .9rem;min-height:2.75rem}
@@ -397,6 +398,10 @@ html,body{height:100%}
           </div>
           <div class="chips" id="c-chips"></div>
         </div>
+        <label class="field"><span class="lab">가입한 날</span>
+          <input type="date" id="c-date" min="2000-01-01" max="2099-12-31">
+          <span class="cap" id="c-date-out"></span>
+        </label>
         <fieldset>
           <legend>세금</legend>
           <div class="seg">
@@ -689,27 +694,39 @@ document.addEventListener('click', function(e){
   inp.dispatchEvent(new Event('input', {bubbles:true}));
 });
 
-/* 고른 금액·금리·기간으로 만기 때 통장에 찍히는 줄을 만든다 */
+/* 가입한 날: 달을 더할 때 그 달에 없는 날(예: 31일)은 말일로 맞춘다 */
+function pad2(x){ return (x < 10 ? '0' : '') + x; }
+function fmtD(d){ return d.getFullYear() + '.' + pad2(d.getMonth()+1) + '.' + pad2(d.getDate()); }
+function addM(d, k){
+  var y = d.getFullYear(), m = d.getMonth() + k, last = new Date(y, m + 1, 0).getDate();
+  return new Date(y, m, Math.min(d.getDate(), last));
+}
+function calcDate(){
+  var p = /^(\d{4})-(\d{2})-(\d{2})$/.exec($('c-date').value || '');
+  if(p){ var d = new Date(+p[1], +p[2]-1, +p[3]); if(!isNaN(d.getTime())) return d; }
+  var t = new Date(); return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+}
+(function(){ var t = new Date(); $('c-date').value = t.getFullYear() + '-' + pad2(t.getMonth()+1) + '-' + pad2(t.getDate()); })();
+$('c-date').addEventListener('input', function(){ renderCalc(); });
+$('c-date').addEventListener('change', function(){ renderCalc(); });
+
+/* 고른 금액·금리·기간·가입일로 만기 때 통장에 찍히는 줄을 만든다. 적금은 달마다 한 줄씩 모두 적는다 */
 function passbookHTML(type, amt, n, r, tax){
   var c = calc(type, amt, n, r, tax), s = type === 'sav', rows = '', i;
   function dg(x){ return Math.round(x).toLocaleString('ko-KR'); } // 통장에는 5,000,000처럼 숫자로 적힌다
+  var d0 = calcDate(), dEnd = addM(d0, n);
   function row(cls, d, w, m, b){ return '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + d + '</td><td>' + w + '</td><td class="n">' + m + '</td><td class="n">' + b + '</td></tr>'; }
   if(!s){
-    rows += row('', '가입한 날', '맡김', dg(amt), dg(amt));
+    rows += row('', fmtD(d0), '맡김', dg(amt), dg(amt));
     rows += row('wait', n + '개월 동안', '기다려요', '없음', dg(amt));
   } else {
-    var show = n <= 12 ? n : 3;
-    for(i = 1; i <= show; i++) rows += row('', i + '번째 달', i + '번째 넣음', dg(amt), dg(amt*i));
-    if(n > 12){
-      rows += row('wait', '4~' + (n-1) + '번째 달', '매달 넣어요', dg(amt) + '씩', dg(amt*(n-1)));
-      rows += row('', n + '번째 달', n + '번째 넣음', dg(amt), dg(amt*n));
-    }
+    for(i = 1; i <= n; i++) rows += row('', fmtD(addM(d0, i-1)), i + '번째 넣음', dg(amt), dg(amt*i));
   }
-  rows += row(tax ? '' : 'end', '만기 날', '이자', '+' + dg(c.interest), dg(c.principal + c.interest));
-  if(tax) rows += row('end', '만기 날', '세금', '−' + dg(c.tax), dg(c.total));
+  rows += row(tax ? '' : 'end', fmtD(dEnd), '만기 이자', '+' + dg(c.interest), dg(c.principal + c.interest));
+  if(tax) rows += row('end', fmtD(dEnd), '세금', '−' + dg(c.tax), dg(c.total));
   return '<figcaption>' + (s ? '적금' : '예금') + ' 통장 안쪽 <span>' + (s ? '매달 ' : '') + won(amt) + ' · 연 ' + r + '% · ' + termText(n) + '</span></figcaption>' +
     '<div class="scroll"><table><thead><tr><th>날짜</th><th>내용</th><th>넣은 돈 (원)</th><th>통장에 있는 돈 (원)</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
-    '<p>만기 날 통장에 있는 돈은 <b class="num">' + won(c.total) + '</b>이에요. 이 돈을 모두 받아요.</p>';
+    '<p>가입한 날은 <b class="num">' + fmtD(d0) + '</b>, 만기 날은 <b class="num">' + fmtD(dEnd) + '</b>이에요.</p><p>만기 날 통장에 있는 돈은 <b class="num">' + won(c.total) + '</b>이에요. 이 돈을 모두 받아요.</p>';
 }
 
 /* ── ② 계산하기 ── */
@@ -730,6 +747,7 @@ function renderCalc(){
   $('c-pb-cover').innerHTML = '<div class="pb-cover' + (sv ? ' s' : '') + '"><span class="pb-emblem">' + (sv ? '적금' : '예금') + '</span><span class="pb-bank">금리교실 은행</span><b class="pb-name">' + (sv ? '정기적금 통장' : '정기예금 통장') + '</b></div>';
   $('c-pb').className = 'pb-page ' + (sv ? 's' : 'd');
   $('c-pb').innerHTML = passbookHTML(type, amt, n, r, tax);
+  $('c-date-out').textContent = '만기 날은 ' + fmtD(addM(calcDate(), n)) + '이에요.';
   $('c-detail').hidden = type !== 'sav';
   if(type === 'sav'){
     var u = amt*r/100/12, rows = '';
