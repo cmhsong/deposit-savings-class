@@ -7,7 +7,11 @@
 <style>
 /* 레이아웃: 한 화면에 한 가지씩. 위에는 보기 설정과 네 개의 큰 탭, 아래에는 짧은 문장과 큰 숫자, 큰 버튼. 모든 크기는 rem이라 글자 크기 버튼으로 함께 커진다. */
 :root{
-  --bg:#EDF2F0; --surface:#FFFFFF; --sunk:#E2EAE7; --line:#B9C8C2;
+  --bg:#F3F5F2; --surface:#FFFFFF; --sunk:#EAEFEB; --line:#C3CFC9;
+  /* 통장 표지와 머리 띠는 실제 물건처럼 어느 테마에서나 같은 색 */
+  --pb-dep:#2447B8; --pb-sav:#0B7A5E; --pb-ink:#FFFFFF; --pb-sheen:rgba(255,255,255,.08);
+  --gold:#E2B95B; --gold-ink:#3A2A05; --hero:#12332B; --hero-ink:#F2F6F4;
+  --paper:#FFFEF8; --paper-line:#E3E1D2; --shadow:rgba(18,33,29,.10);
   --ink:#14231F; --muted:#4C5D58;
   --dep:#2050BE; --dep-soft:#E3EBFB;
   --sav:#08735D; --sav-soft:#DDF2EC;
@@ -23,6 +27,7 @@
     --dep:#8FB0FF; --dep-soft:#1C2A4A;
     --sav:#5AD6B6; --sav-soft:#143A31;
     --stamp:#FF8B81; --stamp-soft:#40201D;
+    --paper:#1E2622; --paper-line:#35423C; --shadow:rgba(0,0,0,.45);
     color-scheme:dark;
   }
 }
@@ -32,6 +37,7 @@
   --dep:#8FB0FF; --dep-soft:#1C2A4A;
   --sav:#5AD6B6; --sav-soft:#143A31;
   --stamp:#FF8B81; --stamp-soft:#40201D;
+    --paper:#1E2622; --paper-line:#35423C; --shadow:rgba(0,0,0,.45);
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -162,11 +168,84 @@ svg text.now{fill:var(--stamp);font-weight:600;font-size:12px}
 .opts button.wrong{background:var(--stamp-soft);border-color:var(--stamp);color:var(--stamp);opacity:1}
 .ok{color:var(--sav);font-weight:700;font-size:1.25rem} .no{color:var(--stamp);font-weight:700;font-size:1.25rem}
 .foot{font-size:.85rem;color:var(--muted)}
+
+/* ───────── 다듬기: 부드러운 면, 통장 그림, 번호 탭 ───────── */
+.wrap{gap:1.4rem}
+.hero{background:var(--hero);color:var(--hero-ink);border-radius:20px;padding:1.6rem 1.5rem;display:flex;justify-content:space-between;align-items:center;gap:1.5rem}
+.hero>div{display:flex;flex-direction:column;gap:.3rem;min-width:0}
+.hero h1{font-size:2rem;letter-spacing:-.01em}
+.hero .eyebrow{font-size:.85rem;letter-spacing:.12em;color:var(--gold);font-weight:700}
+.hero .lead{color:var(--hero-ink);opacity:.88}
+.hero-art{display:flex;flex:none;padding-right:.5rem}
+.hero-art .pb-cover{width:8.5rem;font-size:.58rem}
+.hero-art .pb-cover:first-child{transform:rotate(-8deg)}
+.hero-art .pb-cover:last-child{transform:rotate(6deg) translateY(.5rem);margin-left:-2.2rem}
+@media (max-width:640px){.hero-art{display:none}}
+
+/* 통장 표지 */
+.pb-cover{position:relative;width:min(100%,16rem);max-width:100%;aspect-ratio:8/5;border-radius:.8em;padding:1em 1.1em;display:flex;flex-direction:column;justify-content:flex-end;gap:.1em;color:var(--pb-ink);background:var(--pb-dep);box-shadow:0 .5em 1.2em var(--shadow);font-size:1rem;line-height:1.4}
+.pb-cover.s{background:var(--pb-sav)}
+.pb-cover::before{content:"";position:absolute;inset:0;border-radius:inherit;background:repeating-linear-gradient(135deg,transparent 0 .9em,var(--pb-sheen) .9em 1em)}
+.pb-bank{font-size:.8em;opacity:.88;position:relative}
+.pb-name{font-family:var(--display);font-size:1.35em;position:relative}
+.pb-emblem{position:absolute;top:1em;right:1em;width:2.8em;height:2.8em;border-radius:50%;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;font-weight:700;font-size:.8em}
+/* 통장 안쪽 */
+.pb-page{margin:0;background:var(--paper);border:1px solid var(--paper-line);border-radius:12px;padding:.8rem .9rem;display:flex;flex-direction:column;gap:.4rem;box-shadow:inset 0 .5rem .6rem -.6rem var(--shadow)}
+.pb-page figcaption{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.3rem;font-weight:700}
+.pb-page figcaption span{font-weight:400;color:var(--muted);font-size:.9rem}
+.pb-page th,.pb-page td{border-bottom:1px solid var(--paper-line);font-size:.95rem}
+.pb-page tr.wait td{color:var(--muted)}
+.pb-page tr.end td{font-weight:700;border-bottom:0}
+.pb-page.d tr.end td{color:var(--dep)}
+.pb-page.s tr.end td{color:var(--sav)}
+
+.panel{border-radius:16px;padding:1.4rem;box-shadow:0 1px 2px var(--shadow),0 10px 24px -14px var(--shadow)}
+.kind,.kind.s{border-top:1px solid var(--line)}
+h2{font-size:1.45rem}
+.tools{background:transparent;border:0;padding:0}
+.tools button{min-height:2.4rem;padding:.3rem .9rem;border-radius:99px}
+nav.tabs{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:.35rem;gap:.3rem;box-shadow:0 1px 2px var(--shadow)}
+nav.tabs a{border:0;border-radius:12px;background:transparent;display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.65rem .5rem}
+nav.tabs a .n{width:1.6em;height:1.6em;border-radius:50%;background:var(--sunk);display:grid;place-items:center;font-family:var(--mono);font-size:.9em;flex:none}
+nav.tabs a:hover:not([aria-current]){background:var(--sunk)}
+nav.tabs a[aria-current="page"]{background:var(--hero);color:var(--hero-ink)}
+nav.tabs a[aria-current="page"] .n{background:var(--gold);color:var(--gold-ink)}
+button{border-radius:12px;border-width:1.5px;font-weight:500;transition:background .15s,border-color .15s}
+button:active:not(:disabled){transform:translateY(1px)}
+button.primary{background:var(--hero);color:var(--hero-ink);border-color:var(--hero)}
+button.chip,.tools button{border-radius:99px}
+@media (prefers-reduced-motion:reduce){button{transition:none}}
+input[type=number],input[type=text]{border-radius:12px;border-width:1.5px}
+.seg{border-radius:12px;border-width:1.5px}
+.seg label{border-right-width:1.5px}
+.seg label:has(input:checked){background:var(--hero);color:var(--hero-ink)}
+.eq .box{border-radius:14px}
+.eq .box.total{background:var(--hero);color:var(--hero-ink)}
+ol.steps li{border-width:1px;border-radius:14px}
+ol.steps li::before{align-self:flex-start;background:var(--hero);color:var(--hero-ink);border-radius:99px;padding:.05rem .75rem;font-size:.85rem}
+.formula{border-radius:10px}
+.words div,.tile,.note{border-radius:14px}
+.months div{border-radius:10px}
+.news{border-left:0;border-radius:12px;padding:.7rem 1rem}
+.item{border-width:1px;border-radius:16px;overflow:hidden}
+.ihd{margin:-.9rem -.9rem 0;padding:.6rem .9rem;background:var(--pb-dep);color:var(--pb-ink)}
+.item.s .ihd{background:var(--pb-sav)}
+.ihd .badge{background:var(--pb-sheen);color:var(--pb-ink)}
+.flash{border-width:2px;border-radius:14px}
+.opts button{border-radius:16px}
 </style>
 
 <div class="wrap">
-  <header>
-    <h1>예금·적금 금리 교실</h1>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">금융 생활 수업</p>
+      <h1>예금·적금 금리 교실</h1>
+      <p class="lead">돈을 맡기고, 이자를 받고, 만기에 얼마를 받는지 배워요.</p>
+    </div>
+    <div class="hero-art" aria-hidden="true">
+      <div class="pb-cover"><span class="pb-emblem">예금</span><span class="pb-bank">금리교실 은행</span><b class="pb-name">정기예금 통장</b></div>
+      <div class="pb-cover s"><span class="pb-emblem">적금</span><span class="pb-bank">금리교실 은행</span><b class="pb-name">정기적금 통장</b></div>
+    </div>
   </header>
 
   <div class="tools" role="group" aria-label="보기 설정">
@@ -181,10 +260,10 @@ svg text.now{fill:var(--stamp);font-weight:600;font-size:12px}
   </div>
 
   <nav class="tabs" aria-label="배우는 순서">
-    <a href="#basics">① 예금과 적금</a>
-    <a href="#calc">② 계산하기</a>
-    <a href="#sim">③ 가입해 보기</a>
-    <a href="#quiz">④ 문제 풀기</a>
+    <a href="#basics"><span class="n">1</span>예금과 적금</a>
+    <a href="#calc"><span class="n">2</span>계산하기</a>
+    <a href="#sim"><span class="n">3</span>가입해 보기</a>
+    <a href="#quiz"><span class="n">4</span>문제 풀기</a>
   </nav>
 
   <!-- ───────── ① 예금과 적금 ───────── -->
@@ -196,7 +275,7 @@ svg text.now{fill:var(--stamp);font-weight:600;font-size:12px}
 
     <div class="grid2">
       <div class="panel kind" data-read>
-        <div class="pic" aria-hidden="true">💰</div>
+        <div class="pb-cover" aria-hidden="true"><span class="pb-emblem">예금</span><span class="pb-bank">금리교실 은행</span><b class="pb-name">정기예금 통장</b></div>
         <h2 class="dep">예금</h2>
         <p><b>큰돈을 한 번에</b> 맡겨요.</p>
         <ul>
@@ -205,9 +284,20 @@ svg text.now{fill:var(--stamp);font-weight:600;font-size:12px}
           <li>모아 둔 돈이 있을 때 좋아요.</li>
         </ul>
         <div class="months" id="pic-dep" aria-hidden="true"></div>
+        <figure class="pb-page d">
+          <figcaption>예금 통장 안쪽 <span>500만 원 · 연 3% · 12개월</span></figcaption>
+          <div class="scroll"><table>
+            <thead><tr><th>날짜</th><th>내용</th><th>넣은 돈</th><th>통장에 있는 돈</th></tr></thead>
+            <tbody>
+              <tr><td>1월</td><td>맡김</td><td class="n">500만 원</td><td class="n">500만 원</td></tr>
+              <tr class="wait"><td>2월~12월</td><td>기다려요</td><td class="n">없음</td><td class="n">500만 원</td></tr>
+              <tr class="end"><td>다음 해 1월</td><td>만기 이자</td><td class="n">+15만 원</td><td class="n">515만 원</td></tr>
+            </tbody>
+          </table></div>
+        </figure>
       </div>
       <div class="panel kind s" data-read>
-        <div class="pic" aria-hidden="true">🪙🪙🪙</div>
+        <div class="pb-cover s" aria-hidden="true"><span class="pb-emblem">적금</span><span class="pb-bank">금리교실 은행</span><b class="pb-name">정기적금 통장</b></div>
         <h2 class="sav">적금</h2>
         <p><b>매달 조금씩</b> 넣어요.</p>
         <ul>
@@ -216,6 +306,19 @@ svg text.now{fill:var(--stamp);font-weight:600;font-size:12px}
           <li>돈을 모으고 싶을 때 좋아요.</li>
         </ul>
         <div class="months" id="pic-sav" aria-hidden="true"></div>
+        <figure class="pb-page s">
+          <figcaption>적금 통장 안쪽 <span>매달 10만 원 · 연 3% · 12개월</span></figcaption>
+          <div class="scroll"><table>
+            <thead><tr><th>날짜</th><th>내용</th><th>넣은 돈</th><th>통장에 있는 돈</th></tr></thead>
+            <tbody>
+              <tr><td>1월</td><td>1번째</td><td class="n">10만 원</td><td class="n">10만 원</td></tr>
+              <tr><td>2월</td><td>2번째</td><td class="n">10만 원</td><td class="n">20만 원</td></tr>
+              <tr><td>3월</td><td>3번째</td><td class="n">10만 원</td><td class="n">30만 원</td></tr>
+              <tr class="wait"><td>4월~12월</td><td>매달 넣어요</td><td class="n">10만 원씩</td><td class="n">120만 원</td></tr>
+              <tr class="end"><td>다음 해 1월</td><td>만기 이자</td><td class="n">+1만 9,500원</td><td class="n">121만 9,500원</td></tr>
+            </tbody>
+          </table></div>
+        </figure>
       </div>
     </div>
 
@@ -719,7 +822,7 @@ function renderHold(){
   $('s-hold').innerHTML = S.items.map(function(it){
     var ex = expected(it), el = S.m - it.start, paid = paidOf(it), s = it.type === 'sav';
     var er = earlyRate(it), now = settle(it.deps, er, S.m), left = EW_MAX - (it.ew||0);
-    var h = '<div class="item"><div><span class="badge ' + (s?'s':'') + '">' + (s?'🪙 적금':'💰 예금') + '</span> <b>' + termText(it.term) + '</b> · 금리 <b class="num">' + pct(it.rate) + '</b></div>' +
+    var h = '<div class="item ' + (s?'s':'d') + '"><div class="ihd"><span class="badge ' + (s?'s':'') + '">' + (s?'🪙 적금':'💰 예금') + '</span> <b>' + termText(it.term) + '</b> · 금리 <b class="num">' + pct(it.rate) + '</b></div>' +
       '<div class="prog ' + (s?'s':'') + '"><i style="width:' + (el/it.term*100) + '%"></i></div>' +
       '<div>만기까지 <b>' + (it.term-el) + '개월</b> 남았어요. (' + ym(it.start+it.term) + ')</div>' +
       '<div>' + (s ? '매달 ' + won(it.amt) + '씩, ' : '') + '지금까지 넣은 돈 <b class="num">' + won(paid) + '</b></div>' +
